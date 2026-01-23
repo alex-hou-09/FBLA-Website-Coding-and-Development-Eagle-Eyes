@@ -1,5 +1,7 @@
 # FBLA Lost and Found Website Project
 
+![Status](https://img.shields.io/badge/Status-In_Progress-yellow)
+
 This is a student project created for the **FBLA Website Coding and Development** event. It simulates a school Lost and Found system where users can report lost items, claim found items, and manage a simple credits system for engagement.
 
 ---
