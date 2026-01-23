@@ -1,0 +1,107 @@
+.apcsp-circle {
+  margin-left: 47%;
+  align-items: center;
+  text-align: right;
+}
+
+.ribbon {
+  position: relative;
+  background: var(--base);
+  color: black;
+  padding: 6rem 15rem;
+  font-family: "Quicksand", sans-serif;
+  font-size: 1.7rem;
+  display: flex;
+  justify-content: left;
+  margin-top: -23rem;
+  z-index: -2;
+}
+
+.ribbon span {
+  display: block;
+  font-size: 45%;
+  margin-top: 0.5rem;
+}
+
+.ribbon::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-top: 7rem solid transparent;
+  border-bottom: 7rem solid transparent;
+  border-left: 7rem solid var(--light);
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  padding: 5%;
+  margin-top: 10%;
+}
+
+.grid-container a {
+  text-decoration: none;
+}
+
+.item-card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  text-align: center;
+}
+
+.item-card img {
+  width: 100%;
+  height: 40vh;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  aspect-ratio: 12 / 9;
+}
+
+.item-card h3 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--verydark);
+}
+
+.item-card p {
+  font-family: "Quicksand", sans-serif;
+  font-size: 0.9rem;
+  color: var(--medium);
+}
+
+@media (max-width: 600px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.no-image {
+  width: 100%;
+  height: 40vh; /* match the previous image height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+  color: black;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+

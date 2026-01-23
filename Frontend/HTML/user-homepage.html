@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>WHHS Lost and Found - Report Item</title>
+    <link rel="icon" type="image/x-icon" href="../Images/favicon.ico" />
+
+    <script src="../External/js/_script.js" defer=""></script>
+    <script src="../External/js/user-homepage.js" defer></script>
+
+    <link rel="stylesheet" href="../External/CSS/_styles.css" />
+    <link rel="stylesheet" href="../External/CSS/user-homepage.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="header-left">
+        <!-- Logo = Home -->
+        <a href="index.html" class="logo">
+          <img src="../Images/logo.png" alt="Home" />
+        </a>
+
+        <!-- Left navigation -->
+        <nav class="nav-left">
+          <a href="index.html">Home</a>
+          <a href="browse.html">Found Items</a>
+          <a href="lost.html">Lost Reports</a>
+          <a href="report.html">Report</a>
+        </nav>
+      </div>
+
+      <!-- Right navigation -->
+      <nav class="nav-right">
+        <a href="contact.html">Contact</a>
+        <a href="login.html">Log In</a>
+        <a href="sources.html">Sources</a>
+      </nav>
+    </header>
+
+    <section class="dashboard">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="profile">
+          <div id="avatar">AH</div>
+          <h3 id="name">Alex Hou</h3>
+          <p>Student</p>
+        </div>
+
+        <nav class="dash-nav">
+          <button class="active">Overview</button>
+          <button id="logoutButton">Log Out</button>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-panel">
+        <section class="welcome-card glass">
+          <h1 id="homepage-dashboard">Name Here's User Homepage</h1>
+
+          <div class="credit-pill">
+            <span id = "creditCount" class="credit-number">X</span>
+            <span>Credits Available</span>
+          </div>
+        </section>
+
+        <section class="grid">
+          <!-- Claims -->
+          <div id="claimsList" class="glass panel">
+            <h2>Claims</h2>
+          </div>
+
+          <!-- Turned In -->
+          <div id="turnedInList" class="glass panel">
+            <h2>Turned-in Items</h2>
+          </div>
+        </section>
+        <!-- Contact Submission Responses -->
+        <div id="responsesList" class="glass panel responses">
+          <h2>Contact Submission Responses</h2>
+          <!-- Responses will be dynamically loaded here -->
+        </div>
+      </main>
+    </section>
+
+    <footer>
+      <div class="footer-container">
+        <div class="row">
+          <!-- First Col -->
+          <div class="column">
+            <h4>Location</h4>
+            <ul>
+              <li>Walnut Hills High School</li>
+              <li>3250 Victory Parkway</li>
+              <li>Cincinnati, OH, 45207</li>
+            </ul>
+          </div>
+          <!-- Second Col -->
+          <div class="column">
+            <h4>Web Dev</h4>
+            <ul>
+              <li>Alex Hou</li>
+            </ul>
+          </div>
+          <!-- Third Col -->
+          <div class="column">
+            <h4>Navigation</h4>
+            <ul>
+              <li><a href="browse.html">Browse Items</a></li>
+              <li><a href="report.html">Report</a></li>
+              <li><a href="login.html">Log In</a></li>
+              <li><a href="#">Sources</a></li>
+            </ul>
+          </div>
+          <!-- 4th Col -->
+          <div class="column">
+            <h4>Contact Us</h4>
+            <ul>
+              <li><a href="contact.html">Contact Page</a></li>
+              <li><i>OR</i></li>
+              <li>ahou1@cincinnatips.org</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

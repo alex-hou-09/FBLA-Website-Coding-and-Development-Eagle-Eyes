@@ -1,0 +1,179 @@
+<html lang="en-us">
+  <head>
+    <title>WHHS Lost and Found</title>
+    <link rel="icon" type="image/x-icon" href="../Images/favicon.ico" />
+    <script src="../External/js/_script.js" defer></script>
+    <script src="../External/js/found.js" defer></script>
+    <link rel="stylesheet" href="../External/CSS/_styles.css" />
+    <link rel="stylesheet" href="../External/CSS/found.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="header-left">
+        <!-- Logo = Home -->
+        <a href="index.html" class="logo">
+          <img src="../Images/logo.png" alt="Home" />
+        </a>
+
+        <!-- Left navigation -->
+        <nav class="nav-left">
+          <a href="index.html">Home</a>
+          <a href="browse.html">Found Items</a>
+          <a href="lost.html">Lost Reports</a>
+          <a href="report.html">Report</a>
+        </nav>
+      </div>
+
+      <!-- Right navigation -->
+      <nav class="nav-right">
+        <a href="contact.html">Contact</a>
+        <a href="login.html">Log In</a>
+        <a href="sources.html">Sources</a>
+      </nav>
+    </header>
+
+    <section class="report-section">
+      <div class="report-layout">
+        <form class="report-form" id="reportForm">
+          <h1>Report a Found Item</h1>
+
+          <label>
+            Student CPS Email
+            <input type="email" id="studentEmail" required />
+          </label>
+
+          <label>
+            Student ID
+            <input type="text" id="studentID" required />
+          </label>
+
+          <label>
+            Item Name
+            <input type="text" id="itemName" required />
+          </label>
+
+          <label>
+            Category
+            <select id="category" required>
+              <option value="">Select</option>
+              <option>School Supplies</option>
+              <option>Electronics</option>
+              <option>Clothing</option>
+              <option>Personal Items</option>
+              <option>Other</option>
+            </select>
+          </label>
+
+          <label>
+            Color
+            <input type="text" id="color" required />
+          </label>
+
+          <label>
+            Location Found
+            <input type="text" id="locationFound" required />
+          </label>
+
+          <label>
+            Date Found
+            <input type="date" id="dateFound" required />
+          </label>
+
+          <label>
+            Very Vague Description
+            <textarea
+              id="description"
+              rows="3"
+              required
+              placeholder="Unique marks, contents, or details"
+            ></textarea>
+          </label>
+
+          <label>
+            Upload Image
+            <input type="file" id="UPLOADIMAGE" accept="image/*" required/>
+          </label>
+
+          <button type="submit">Submit Report</button>
+          <p id="successMessage" style="display: none">
+            Item successfully reported
+          </p>
+        </form>
+
+        <div class="decorative-circles">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+          <div class="circle circle-3"></div>
+          <div class="circle circle-4"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-container">
+        <div class="row">
+          <!-- First Col -->
+          <div class="column">
+            <h4>Location</h4>
+            <ul>
+              <li>Walnut Hills High School</li>
+              <li>3250 Victory Parkway</li>
+              <li>Cincinnati, OH, 45207</li>
+            </ul>
+          </div>
+          <!-- Second Col -->
+          <div class="column">
+            <h4>Web Dev</h4>
+            <ul>
+              <li>Alex Hou</li>
+            </ul>
+          </div>
+          <!-- Third Col -->
+          <div class="column">
+            <h4>Navigation</h4>
+            <ul>
+              <li><a href="browse.html">Browse Items</a></li>
+              <li><a href="report.html">Report</a></li>
+              <li><a href="login.html">Log In</a></li>
+              <li><a href="#">Sources</a></li>
+            </ul>
+          </div>
+          <!-- 4th Col -->
+          <div class="column">
+            <h4>Contact Us</h4>
+            <ul>
+              <li><a href="contact.html">Contact Page</a></li>
+              <li><i>OR</i></li>
+              <li>ahou1@cincinnatips.org</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

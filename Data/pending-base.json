@@ -1,0 +1,26 @@
+{
+  "pending": [
+    {
+      "typeOfSubmission": "found-report",
+      "studentEmail": "ahou1@cincinnatips.org",
+      "studentID": "123456789",
+      "itemName": "Sweatshirt",
+      "category": "Other",
+      "color": "green",
+      "locationFound": "Room 1526",
+      "dateFound": "2026-01-01",
+      "description": "TEST",
+      "UPLOADIMAGE": "Bob-Ross-on-planetminecraft-com.png"
+    },
+    {
+      "typeOfSubmission": "item-claim",
+      "studentEmail": "ahou1@cincinnatips.org",
+      "studentID": "123456789",
+      "itemName": "Shoes",
+      "itemID": "000002",
+      "dateLost": "2009-01-04",
+      "uniqueFeatures": "TEST",
+      "notes": "TEST"
+    }
+  ]
+}

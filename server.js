@@ -1,0 +1,546 @@
+const express = require("express");
+const fs = require("fs");
+const path = require("path");
+const session = require("express-session");
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+app.use(express.static(__dirname));
+
+// ===========================
+//! Session Configuration
+// ===========================
+
+app.use(
+  session({
+    secret: "mySuperSecretKey",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 24 * 60 * 60 * 1000 }, // 1 day
+  })
+);
+
+// ===========================
+//! File Paths
+// ===========================
+
+const DATA_DIR = path.join(__dirname, "Data");
+const FILES = {
+  items: path.join(DATA_DIR, "_item-information.json"),
+  users: path.join(DATA_DIR, "user-information.json"),
+  pending: path.join(DATA_DIR, "pending-base.json"),
+  contactWaiting: path.join(DATA_DIR, "waiting-contact.json"),
+  contactAnswered: path.join(DATA_DIR, "answered-contact.json"),
+  itemClaims: path.join(DATA_DIR, "item-claims.json"),
+  lostItems: path.join(DATA_DIR, "lost-items.json"),
+  claimedItems: path.join(DATA_DIR, "claimed-items.json"),
+};
+
+// ===========================
+//! Helper Functions
+// ===========================
+
+function readJSON(filePath, defaultValue = {}) {
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, JSON.stringify(defaultValue, null, 2));
+    return defaultValue;
+  }
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch {
+    return defaultValue;
+  }
+}
+
+function writeJSON(filePath, data) {
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+}
+
+function ensureFile(filePath, key) {
+  if (!fs.existsSync(filePath)) {
+    writeJSON(filePath, { [key]: [] });
+  }
+}
+
+function awardCredits(userID, amount) {
+  const usersData = readJSON(FILES.users, { users: [] });
+
+  const user = usersData.users.find(
+    (u) => String(u.id) === String(userID) && u.userType === "Student"
+  );
+
+  if (!user) return;
+
+  user.credits = (user.credits || 0) + amount;
+  writeJSON(FILES.users, usersData);
+}
+
+// ===========================
+//! Items Routes
+// ===========================
+
+app.get("/api/items", (req, res) => {
+  const data = readJSON(FILES.items, { items: [] });
+  res.json(data);
+});
+
+app.delete("/api/items/:id", (req, res) => {
+  const id = String(req.params.id);
+  const data = readJSON(FILES.items, { items: [] });
+  const filtered = data.items.filter((item) => String(item.id) !== id);
+  writeJSON(FILES.items, { items: filtered });
+  res.json({ success: true });
+});
+
+// ===========================
+//! Login Routes
+// ===========================
+
+app.post("/api/login", (req, res) => {
+  const { email, id } = req.body;
+  const data = readJSON(FILES.users, { users: [] });
+
+  const user = data.users.find(
+    (u) => u.email === email && String(u.id) === String(id)
+  );
+  if (!user) return res.json({ success: false });
+
+  req.session.user = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    userType: user.userType,
+    credits: user.userType === "Student" ? user.credits : 0,
+  };
+
+  res.json({
+    success: true,
+    redirect:
+      user.userType === "Admin"
+        ? "/Frontend/HTML/admin.html"
+        : "/Frontend/HTML/user-homepage.html",
+  });
+});
+
+app.get("/api/current-user", (req, res) => {
+  res.json(req.session.user || null);
+});
+
+app.post("/api/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) return res.status(500).json({ success: false });
+    res.json({ success: true });
+  });
+});
+
+// ===========================
+//! Claims Routes
+// ===========================
+
+app.post("/api/claims", (req, res) => {
+  const newClaim = req.body;
+  const data = readJSON(FILES.pending, { pending: [] });
+  data.pending.push(newClaim);
+  writeJSON(FILES.pending, data);
+  res.json({ success: true });
+});
+
+app.post("/api/item-claims", (req, res) => {
+  const {
+    studentEmail,
+    studentID,
+    itemName,
+    itemID,
+    dateLost,
+    uniqueFeatures,
+    notes,
+  } = req.body;
+
+  if (!studentEmail || !studentID || !itemID || !dateLost) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Required fields are missing." });
+  }
+
+  const data = readJSON(FILES.pending, { pending: [] });
+  data.pending.push({
+    typeOfSubmission: "item-claim",
+    studentEmail,
+    studentID,
+    itemName,
+    itemID,
+    dateLost,
+    uniqueFeatures,
+    notes,
+  });
+
+  writeJSON(FILES.pending, data);
+  res.json({ success: true, message: "Claim submitted and pending approval." });
+});
+
+// ===========================
+//! Contact Routes
+// ===========================
+
+app.post("/api/contact", (req, res) => {
+  const { email, studentId, subject, category, message } = req.body;
+  if (!email || !studentId || !subject || !category || !message) {
+    return res
+      .status(400)
+      .json({ success: false, error: "All fields are required." });
+  }
+
+  const data = readJSON(FILES.contactWaiting, { messages: [] });
+  data.messages.push({ email, studentId, subject, category, message });
+  writeJSON(FILES.contactWaiting, data);
+
+  res.json({ success: true, message: "Your message has been submitted." });
+});
+
+app.post("/api/contact/respond", (req, res) => {
+  const { message, response, answeredAt } = req.body;
+  if (!message || !response) return res.status(400).json({ success: false });
+
+  const waitingData = readJSON(FILES.contactWaiting, { messages: [] });
+  const answeredData = readJSON(FILES.contactAnswered, { messages: [] });
+
+  const index = waitingData.messages.findIndex(
+    (m) =>
+      m.email === message.email &&
+      m.studentId === message.studentId &&
+      m.subject === message.subject &&
+      m.message === message.message
+  );
+
+  if (index === -1) {
+    return res.status(404).json({ success: false, error: "Message not found" });
+  }
+
+  const [removedMessage] = waitingData.messages.splice(index, 1);
+  answeredData.messages.push({ ...removedMessage, response, answeredAt });
+
+  writeJSON(FILES.contactWaiting, waitingData);
+  writeJSON(FILES.contactAnswered, answeredData);
+
+  res.json({ success: true });
+});
+
+// ===========================
+//! Claim Decision Route
+// ===========================
+app.post("/api/claims/decision", (req, res) => {
+  try {
+    const { submission, decision } = req.body;
+
+    // Ensure all files exist
+    ensureFile(FILES.pending, "pending");
+    ensureFile(FILES.itemClaims, "claims");
+    ensureFile(FILES.lostItems, "lost");
+    ensureFile(FILES.items, "items");
+    ensureFile(FILES.claimedItems, "claimedItems");
+
+    // Remove from pending by matching type, itemID, and studentEmail
+    const pendingData = readJSON(FILES.pending, { pending: [] });
+    pendingData.pending = pendingData.pending.filter(
+      (p) =>
+        !(
+          p.typeOfSubmission === submission.typeOfSubmission &&
+          p.itemID === submission.itemID &&
+          p.studentEmail === submission.studentEmail
+        )
+    );
+
+    if (decision === "approve") {
+      if (submission.typeOfSubmission === "item-claim") {
+        // Save approved claim history
+        const claims = readJSON(FILES.itemClaims, { claims: [] });
+        claims.claims.push({
+          ...submission,
+          status: "Approved",
+        });
+        writeJSON(FILES.itemClaims, claims);
+
+        // Move item from items -> claimed-items
+        const itemsData = readJSON(FILES.items, { items: [] });
+        const claimedData = readJSON(FILES.claimedItems, { claimedItems: [] });
+
+        const claimedItem = itemsData.items.find(
+          (item) => String(item.id) === String(submission.itemID)
+        );
+
+        if (!claimedItem) {
+          throw new Error("Item not found in _item-information.json");
+        }
+
+        claimedData.claimedItems.push({
+          ...claimedItem,
+
+          // KEEP original submitter (finder)
+          submitterEmail: claimedItem.submitterEmail,
+          submitterID: claimedItem.submitterID,
+
+          // ADD claimer info separately
+          claimedByEmail: submission.studentEmail,
+          claimedByID: submission.studentID,
+
+          claimedAt: new Date().toISOString(),
+        });
+
+        writeJSON(FILES.claimedItems, claimedData);
+
+        // AWARD +10 CREDITS HERE
+        awardCredits(claimedItem.submitterID, 10);
+
+        // Remove from active items
+        itemsData.items = itemsData.items.filter(
+          (item) => String(item.id) !== String(submission.itemID)
+        );
+
+        writeJSON(FILES.items, itemsData);
+      }
+
+      if (submission.typeOfSubmission === "lost-report") {
+        const lost = readJSON(FILES.lostItems, { lost: [] });
+        lost.lost.push(submission);
+        writeJSON(FILES.lostItems, lost);
+      }
+
+      if (submission.typeOfSubmission === "found-report") {
+        const items = readJSON(FILES.items, { items: [] });
+        items.items.push({
+          id: Date.now().toString(),
+          name: submission.itemName,
+          category: submission.category,
+          color: submission.color,
+          description: submission.description,
+          locationFound: submission.locationFound,
+          dateFound: submission.dateFound,
+          image: submission.UPLOADIMAGE || "",
+          status: "Pending", // item not claimed yet
+          submitterEmail: submission.studentEmail,
+          submitterID: submission.studentID,
+        });
+        writeJSON(FILES.items, items);
+      }
+    }
+
+    writeJSON(FILES.pending, pendingData);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("CLAIM DECISION ERROR:", err);
+    res.status(500).json({ success: false });
+  }
+});
+
+app.get("/api/user/item-claims", (req, res) => {
+  if (!req.session.user || !req.session.user.email) {
+    return res.status(401).json({ success: false, error: "Not logged in" });
+  }
+
+  const userEmail = req.session.user.email.toLowerCase();
+  const userID = String(req.session.user.id);
+
+  const pendingData = readJSON(FILES.pending, { pending: [] });
+  const approvedData = readJSON(FILES.itemClaims, { claims: [] });
+
+  // Filter only item-claims for this user
+  const pendingClaims = pendingData.pending
+    .filter(
+      (c) =>
+        c.typeOfSubmission === "item-claim" &&
+        (c.studentEmail.toLowerCase() === userEmail ||
+          String(c.studentID) === userID)
+    )
+    .map((c) => ({ ...c, status: "Pending" }));
+
+  const approvedClaims = approvedData.claims
+    .filter(
+      (c) =>
+        c.typeOfSubmission === "item-claim" &&
+        (c.studentEmail.toLowerCase() === userEmail ||
+          String(c.studentID) === userID)
+    )
+    .map((c) => ({ ...c, status: "Approved" }));
+
+  res.json({
+    success: true,
+    claims: [...pendingClaims, ...approvedClaims],
+  });
+});
+
+app.delete("/api/item-claims/:itemID/:email", (req, res) => {
+  const { itemID, email } = req.params;
+  const decodedEmail = decodeURIComponent(email);
+
+  const data = readJSON(FILES.itemClaims, { claims: [] });
+  const originalLength = data.claims.length;
+
+  data.claims = data.claims.filter(
+    (c) =>
+      !(
+        String(c.itemID) === String(itemID) &&
+        c.studentEmail === decodedEmail &&
+        c.status === "Approved"
+      )
+  );
+
+  if (data.claims.length === originalLength) {
+    return res.status(404).json({ success: false, error: "Claim not found." });
+  }
+
+  writeJSON(FILES.itemClaims, data);
+  res.json({ success: true });
+});
+
+//! NEW
+
+app.get("/api/user/turned-in-items", (req, res) => {
+  if (!req.session.user) return res.status(401).json({ success: false });
+
+  const userEmail = req.session.user.email.toLowerCase();
+  const userID = String(req.session.user.id);
+
+  // 1. Pending reports
+  const pendingData = readJSON(FILES.pending, { pending: [] });
+  const pendingReports = pendingData.pending
+    .filter(
+      (r) =>
+        r.typeOfSubmission === "found-report" &&
+        (r.studentEmail.toLowerCase() === userEmail ||
+          String(r.studentID) === userID)
+    )
+    .map((r) => ({ ...r, status: "Pending" }));
+
+  // 2. Approved items (Waiting / Claimed)
+  // 2. Approved items (Waiting)
+  const itemsData = readJSON(FILES.items, { items: [] });
+  const waitingReports = itemsData.items
+    .filter(
+      (item) =>
+        item.submitterEmail?.toLowerCase() === userEmail ||
+        String(item.submitterID) === userID
+    )
+    .map((item) => ({ ...item, status: "Waiting" }));
+
+  // 3. Claimed items
+  const claimedData = readJSON(FILES.claimedItems, { claimedItems: [] });
+  const claimedReports = claimedData.claimedItems
+    .filter(
+      (item) =>
+        item.submitterEmail?.toLowerCase() === userEmail ||
+        String(item.submitterID) === userID
+    )
+    .map((item) => ({ ...item, status: "Claimed" }));
+
+  res.json({
+    success: true,
+    reports: [...pendingReports, ...waitingReports, ...claimedReports],
+  });
+});
+
+app.delete("/api/claimed-items/:id", (req, res) => {
+  const id = String(req.params.id);
+
+  const data = readJSON(FILES.claimedItems, { claimedItems: [] });
+  const originalLength = data.claimedItems.length;
+
+  data.claimedItems = data.claimedItems.filter(
+    (item) => String(item.id) !== id
+  );
+
+  if (data.claimedItems.length === originalLength) {
+    return res.status(404).json({ success: false });
+  }
+
+  writeJSON(FILES.claimedItems, data);
+  res.json({ success: true });
+});
+
+// Get all answered contact submissions for current user
+app.get("/api/user/contact-responses", (req, res) => {
+  if (!req.session.user) return res.status(401).json({ success: false });
+
+  const userEmail = req.session.user.email.toLowerCase();
+  const userID = String(req.session.user.id);
+
+  const answeredData = readJSON(FILES.contactAnswered, { messages: [] });
+
+  const userResponses = answeredData.messages.filter(
+    (msg) =>
+      msg.email.toLowerCase() === userEmail || String(msg.studentId) === userID
+  );
+
+  res.json({ success: true, responses: userResponses });
+});
+
+// Delete an answered contact submission
+app.delete("/api/contact-responses/:email/:subject", (req, res) => {
+  const { email, subject } = req.params;
+  const decodedEmail = decodeURIComponent(email);
+  const decodedSubject = decodeURIComponent(subject);
+
+  const data = readJSON(FILES.contactAnswered, { messages: [] });
+  const originalLength = data.messages.length;
+
+  data.messages = data.messages.filter(
+    (msg) => !(msg.email === decodedEmail && msg.subject === decodedSubject)
+  );
+
+  if (data.messages.length === originalLength) {
+    return res
+      .status(404)
+      .json({ success: false, error: "Response not found" });
+  }
+
+  writeJSON(FILES.contactAnswered, data);
+  res.json({ success: true });
+});
+
+app.get("/api/user/credits", (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).json({ success: false });
+  }
+
+  const data = readJSON(FILES.users, { users: [] });
+
+  const user = data.users.find(
+    (u) =>
+      String(u.id) === String(req.session.user.id) &&
+      u.email === req.session.user.email &&
+      u.userType === "Student"
+  );
+
+  if (!user) {
+    return res.json({ success: false });
+  }
+
+  res.json({
+    success: true,
+    credits: user.credits,
+  });
+});
+
+app.get("/api/items/latest", (req, res) => {
+  const data = readJSON(FILES.items, { items: [] });
+
+  const latestItems = data.items
+    .filter(item => item.image && item.image !== "")
+    .sort((a, b) => Number(b.id) - Number(a.id))
+    .slice(0, 5)
+    .map(item => ({
+      image: item.image,
+      name: item.name
+    }));
+
+  res.json({ success: true, items: latestItems });
+});
+
+
+// ===========================
+//! Start Server
+// ===========================
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});

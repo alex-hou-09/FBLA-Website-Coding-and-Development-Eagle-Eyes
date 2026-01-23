@@ -1,0 +1,144 @@
+.report-section {
+  padding: 5%;
+  font-family: "Quicksand", sans-serif;
+}
+
+.report-layout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: relative;
+}
+
+.report-form {
+  background: white;
+  padding: 3rem;
+  border-radius: 1rem;
+  width: 60%;
+  max-width: 1000px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+}
+
+.report-form h1,
+.report-form textarea,
+.report-form button,
+#successMessage {
+  grid-column: span 2;
+}
+
+.report-form h1 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 450;
+  text-align: left;
+  color: var(--verydark);
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95rem;
+}
+
+input,
+select,
+textarea {
+  margin-top: 0.5rem;
+  padding: 0.6rem;
+  font-family: inherit;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+button {
+  font-family: "Montserrat", sans-serif;
+  margin-top: 1rem;
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  background-color: var(--verydark);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#successMessage {
+  display: none;
+  color: green;
+  text-align: left;
+}
+
+.decorative-circles {
+  display: flex;
+  justify-content: right;
+}
+
+.circle {
+  border-radius: 50%;
+  position: absolute;
+}
+
+.circle-1 {
+  background-color: var(--medium);
+  width: clamp(120px, 33vw, 2000px);
+  height: clamp(120px, 33vw, 2000px);
+  z-index: 4;
+  right: -24%;
+  bottom: 17%;
+}
+
+.circle-2 {
+  background-color: var(--dark);
+  width: clamp(140px, 38vw, 2000px);
+  height: clamp(140px, 38vw, 2000px);
+  z-index: 3;
+  right: -10%;
+  bottom: -5%;
+}
+
+.circle-3 {
+  background-color: var(--verydark);
+  width: clamp(200px, 43vw, 2000px);
+  height: clamp(200px, 43vw, 2000px);
+  z-index: 2;
+  right: -30%;
+  bottom: -17%;
+}
+
+.circle-4 {
+  background-color: var(--base);
+  width: clamp(200px, 43vw, 2000px);
+  height: clamp(200px, 43vw, 2000px);
+  z-index: 1;
+  right: -25%;
+  bottom: 10%;
+}
+
+@media (max-width: 900px) {
+  .report-layout {
+    flex-direction: column;
+  }
+
+  .report-form {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .report-form h1,
+  .report-form textarea,
+  .report-form button,
+  #successMessage {
+    grid-column: span 1;
+  }
+
+  .decorative-circles {
+    display: none;
+  }
+}
+
+textarea {
+  resize: none;
+}

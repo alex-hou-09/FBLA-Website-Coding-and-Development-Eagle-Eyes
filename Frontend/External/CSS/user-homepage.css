@@ -1,0 +1,165 @@
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--light);
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  color: white;
+}
+
+#homepage-dashboard {
+  font-weight: 400;
+}
+
+.sidebar {
+  width: 260px;
+  padding: 30px;
+  background-color: var(--verydark);
+  backdrop-filter: blur(12px);
+}
+
+.profile {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+#avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #e0e1dd;
+  color: #1b263b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin: 0 auto 10px;
+}
+
+.dash-nav button {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  text-align: left;
+}
+
+.dash-nav .active,
+.dash-nav button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.main-panel {
+  flex: 1;
+  padding: 40px;
+}
+
+.glass {
+  background-color: var(--base);
+  color: black;
+  backdrop-filter: blur(15px);
+  border-radius: 12px;
+  padding: 25px;
+  font-weight: 400;
+}
+
+.welcome-card {
+  margin-bottom: 30px;
+}
+
+.credit-pill {
+  margin-top: 20px;
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 30px;
+  border: 3px var(--light) solid;
+}
+
+.credit-number {
+  font-size: 1.8rem;
+  font-weight: 400;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.panel h2 {
+  margin-bottom: 15px;
+  font-weight: 400;
+}
+
+.sect {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 3px var(--light) solid;
+  box-shadow: 10px rgba(0, 0, 0, 0.4);
+}
+
+.pending {
+  border-left: 5px solid #ffee8c;
+}
+.approved {
+  border-left: 5px solid #bfe3b4;
+}
+.denied {
+  border-left: 5px solid #ff746c;
+}
+
+.gain {
+  font-weight: bold;
+  color: #90dbf4;
+}
+
+.responses {
+  margin-top: 4%;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+  margin-left: 10px;
+}
+
+.close-btn:hover {
+  color: #ff0000;
+}
+
+.claimed {
+  border-left: 5px solid #90dbf4;
+}
+
+/* Pending reports (yellow border) */
+.sect.pending {
+  border-left: 4px solid #FFD700; /* gold/yellow */
+  padding-left: 8px; /* add some space after border */
+}
+
+/* Waiting reports (orange border) */
+.sect.waiting {
+  border-left: 4px solid #FFA500; /* orange */
+  padding-left: 8px;
+}
+
+/* Claimed reports (optional, could be green or no border) */
+.sect.claimed {
+  border-left: 4px solid #4CAF50; /* green */
+  padding-left: 8px;
+}

@@ -1,0 +1,133 @@
+.report-hub {
+  font-family: "Quicksand", sans-serif;
+}
+
+/* FULL WIDTH SPLIT REPORT SECTION */
+.report-split-full {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 70vh;
+  position: relative;
+}
+
+/* Panels */
+.report-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  text-decoration: none;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Left side */
+.left-panel {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 95%;
+  text-align: center;
+  background: linear-gradient(135deg, var(--base), var(--dark));
+  color: var(--black);
+}
+
+.shift-left {
+  text-align: left;
+}
+
+/* Right side */
+.right-panel {
+  font-size: 95%;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  text-align: center;
+  background: linear-gradient(135deg, var(--verydark), var(--medium));
+  color: white;
+}
+
+.shift-right {
+  text-align: right;
+}
+
+/* Content */
+.panel-content {
+  max-width: 420px;
+}
+
+.panel-content h2 {
+  font-weight: 500;
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+}
+
+.panel-content p {
+  margin-bottom: 1.5rem;
+}
+
+.panel-content ul {
+  padding-left: 1.2rem;
+}
+
+.panel-content li {
+  margin-bottom: 0.6rem;
+}
+
+/* Hover interaction */
+.report-panel:hover {
+  transform: scale(1.01);
+}
+
+/* Center REPORT */
+.center-report {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  font-size: 4.5rem;
+  font-weight: 800;
+  letter-spacing: 0.1rem;
+  color: var(--dark);
+  text-shadow: 0 0 5px var(--dark), /* Inner white glow */ 0 0 15px var(--base),
+    /* Outer blue glow */ 0 0 20px var(--base), 0 0 25px var(--base);
+
+  user-select: none;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.center-report span {
+  line-height: 1;
+}
+
+/* White text fixes */
+.right-panel h2,
+.right-panel p,
+.right-panel li {
+  color: white;
+}
+
+.right-panel li::marker {
+  color: var(--base);
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .report-split-full {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .center-report {
+    writing-mode: horizontal-tb;
+    font-size: 3rem;
+    padding: 2rem 0;
+  }
+
+  .report-panel {
+    padding: 3rem 2rem;
+  }
+}

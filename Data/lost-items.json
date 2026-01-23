@@ -1,0 +1,55 @@
+{
+  "lost": [
+    {
+      "studentEmail": "ahou1@cincinnatips.org",
+      "studentID": "600000162",
+      "itemName": "Charger",
+      "category": "School Supplies",
+      "color": "black",
+      "lastSeen": "01/08/2026",
+      "description": "just a regular black computer charger",
+      "image": "../Images/shoes.jpg"
+    },
+    {
+      "studentEmail": "ifry@cincinnatips.org",
+      "studentID": "513908948",
+      "itemName": "Chain Bracelet",
+      "category": "Personal Items",
+      "color": "silver",
+      "lastSeen": "12/21/2025",
+      "description": "a silver armani chain bracelet",
+      "image": ""
+    },
+    {
+      "studentEmail": "ifry@cincinnatips.org",
+      "studentID": "513908948",
+      "itemName": "Keys",
+      "category": "Personal Items",
+      "color": "blue",
+      "lastSeen": "01/04/2026",
+      "description": "a blue Duke lanyard with keys on the end of it",
+      "image": "../Images/keys.jpg"
+    },
+    {
+      "studentEmail": "ahou1@cincinnatips.org",
+      "studentID": "600000162",
+      "itemName": "Charger",
+      "category": "School Supplies",
+      "color": "black",
+      "lastSeen": "01/08/2026",
+      "description": "just a regular black computer charger",
+      "image": ""
+    },
+    {
+      "typeOfSubmission": "lost-report",
+      "studentEmail": "ahou1@cincinnatips.org",
+      "studentID": "123456789",
+      "itemName": "TEST",
+      "category": "School Supplies",
+      "color": "TEST",
+      "lastSeen": "2009-01-04",
+      "description": "TEST",
+      "UPLOADIMAGE": ""
+    }
+  ]
+}

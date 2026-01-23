@@ -1,0 +1,217 @@
+.browse-circle {
+  margin-left: 5%;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+  text-align: left;
+}
+
+.ribbon {
+  position: relative;
+  background: var(--base);
+  color: black;
+  padding: 6rem 15rem;
+  font-family: "Quicksand", sans-serif;
+  font-size: 1.8rem;
+  display: flex;
+  justify-content: right;
+  margin-top: -23rem;
+  z-index: -2;
+}
+
+.ribbon::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-top: 7rem solid transparent;
+  border-bottom: 7rem solid transparent;
+  border-right: 7rem solid var(--light);
+}
+
+.search-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 15%;
+  margin-top: -2rem;
+}
+
+
+#searchInput:hover,
+#searchInput:focus {
+  border-color: var(--light);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* evenly split 3 columns */
+  gap: 2rem;
+  padding: 5%;
+  margin-top: 10%;
+  align-items: stretch; /* ensures all cards in a row are equal height */
+}
+
+.grid-container a {
+  text-decoration: none;
+  display: flex; /* allow child .item-card to stretch */
+}
+
+.item-card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  text-align: center;
+  height: 100%; /* fill the height of the parent grid cell */
+}
+
+.item-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.item-card img {
+  width: 100%;
+  height: 40vh;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  aspect-ratio: 12 / 9;
+}
+
+.item-card h3 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+  color: var(--verydark);
+}
+
+.item-card p {
+  font-family: "Quicksand", sans-serif;
+  font-size: 0.9rem;
+  color: var(--medium);
+}
+
+@media (max-width: 900px) {
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Container for filters */
+.browse-home .filters-container {
+  display: flex;
+  justify-content: center; /* center horizontally */
+  gap: 15px; /* space between dropdown and search */
+  margin-bottom: 25px;
+  flex-wrap: wrap; /* wrap on smaller screens */
+}
+
+/* Category dropdown styling */
+#categoryFilter {
+  flex: 1 1 200px; /* grow, shrink, base width */
+  max-width: 250px;
+  padding: 12px 15px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--medium);
+  background-color: white;
+  font-family: "Quicksand", sans-serif;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+}
+
+#categoryFilter:hover,
+#categoryFilter:focus {
+  border-color: var(--light);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Search input styling */
+#searchInput {
+  flex: 2 1 300px; /* grow more, shrink, base width */
+  max-width: 300px;
+  height: 60px;
+  padding: 12px 15px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--medium);
+  outline: none;
+  font-family: "Quicksand", sans-serif;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+}
+
+#searchInput:hover,
+#searchInput:focus {
+  border-color: var(--light);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Responsive: stack vertically on small screens */
+@media (max-width: 600px) {
+  .browse-home .filters-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #categoryFilter,
+  #searchInput {
+    width: 80%;
+    max-width: 300px;
+  }
+}
+
+
+.filters-container {
+  display: flex;
+  justify-content: flex-end; /* align items horizontally */
+  gap: 5px; /* space between dropdown and search */
+  margin-left: 50%; /* push container right */
+  margin-top: -2rem; /* sits under the ribbon */
+  flex-wrap: wrap; /* wrap on smaller screens */
+}
+
+/* No items styling */
+.no-items {
+  grid-column: 1 / -1; /* span all columns */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* vertical center */
+  align-items: center;     /* horizontal center */
+  text-align: center;
+  padding: 4rem 2rem;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 200;
+  color: black;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.no-items p:first-child {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.no-items p:last-child {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--verydark);
+}

@@ -1,0 +1,65 @@
+.item-details {
+  padding: 5%;
+  font-family: "Quicksand", sans-serif;
+}
+
+.details-container {
+  display: flex;
+  gap: 3rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.image-container {
+  flex: 1;
+  min-width: 250px;
+  max-width: 450px;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 9 / 9;
+}
+
+#displayed-image {
+  width: 75%;
+  height: 75%;
+  object-fit: cover;
+  border-radius: 5px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.info-container {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.item-header {
+  color: var(--verydark);
+  font-size: 2.5rem;
+}
+
+.claim-button {
+  font-family: "Quicksand", sans-serif;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  background-color: var(--verydark);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.back-link {
+  display: inline;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 1rem;
+  color: var(--verydark);
+  text-decoration: none;
+  height: 5%;
+}
