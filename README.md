@@ -2,7 +2,7 @@
 
 ![Status](https://img.shields.io/badge/Status-In_Progress-yellow)
 
-This is a student project created for the **FBLA Website Coding and Development** event. It simulates a school Lost and Found system where users can report lost items, claim found items, and manage a simple credits system for engagement.
+This is my student project created for the **FBLA Website Coding and Development** event. It simulates the Walnut Hills High School Lost and Found system where users can report lost items, claim found items, and manage a simple credits system for engagement. This project serves to digitize and streamline the entire lost and found system, which helps to enhance the lost item process.
 
 ---
 
@@ -21,11 +21,18 @@ This is a student project created for the **FBLA Website Coding and Development*
 ```
 FBLA-Website-Coding-and-Development-2026/
 ├── Data/               # JSON files storing users, items, claims, etc.
-├── Frontend/           # HTML, CSS, and JS for the website interface
-├── server.js           # Node.js/Express backend
+├── Frontend/
+│   ├── HTML/           # All HTML pages
+│   ├── Images/         # Images used in the site
+│   └── External/
+│       ├── CSS/        # All CSS files
+│       └── JS/         # All JavaScript files
+├── .gitignore          # Files and folders Git should ignore  
 ├── package.json        # Project configuration and dependencies
-├── .gitignore          # Files and folders Git should ignore
+├── package-lock.json   # Auto-generated dependency tree
+├── server.js           # Node.js/Express backend
 └── README.md           # This documentation
+
 ```
 
 ---
@@ -69,8 +76,6 @@ http://localhost:3000
 
 ##  Screenshots
 
-*Add images to visually showcase your project here.*
-
 ![Screenshot 1](link-to-your-screenshot-1.png)  
 ![Screenshot 2](link-to-your-screenshot-2.png)  
 
@@ -83,24 +88,6 @@ http://localhost:3000
 
 ---
 
-##  Contributing
-
-1. Fork the repository  
-2. Create a branch:  
-```bash
-git checkout -b feature-name
-```  
-3. Commit your changes:  
-```bash
-git commit -m "Add feature"
-```  
-4. Push to your branch:  
-```bash
-git push origin feature-name
-```  
-5. Open a Pull Request  
-
----
 
 ##  License
 
