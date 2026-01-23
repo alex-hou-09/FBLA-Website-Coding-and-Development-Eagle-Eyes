@@ -2,7 +2,9 @@
 
 ![Status](https://img.shields.io/badge/Status-In_Progress-yellow)
 
-This is my student project created for the **FBLA Website Coding and Development** event. It simulates the Walnut Hills High School Lost and Found system where users can report lost items, claim found items, and manage a simple credits system for engagement. This project serves to digitize and streamline the entire lost and found system, which helps to enhance the lost item process.
+This is my student project created for the **FBLA Website Coding and Development** event. It simulates the Walnut Hills High School Lost and Found system where users can report lost items, claim found items, and manage a simple credits system for engagement. This project serves to digitize and streamline the entire lost and found system, which helps to enhance the lost item process. 
+
+Note: the frontend is built off my previous project displaying the computer science classes at my school. This was in order for me to focus on project-based learning of backend development as it enabled me to spend more time working with APIs and JSON files.
 
 ---
 
