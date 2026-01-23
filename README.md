@@ -76,13 +76,6 @@ http://localhost:3000
 
 ---
 
-##  Screenshots
-
-![Homepage](Frontend/Images/homepage.png)  
-![Screenshot 2](link-to-your-screenshot-2.png)  
-
----
-
 ##  Credits System
 
 - Students earn credits for returning found items.  
