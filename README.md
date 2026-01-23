@@ -1,9 +1,5 @@
 # FBLA Lost and Found Website Project
 
-![License](https://img.shields.io/badge/License-Educational-blue)
-![Status](https://img.shields.io/badge/Status-Completed-green)
-![Language](https://img.shields.io/badge/Language-Node.js-yellow)
-
 This is a student project created for the **FBLA Website Coding and Development** event. It simulates a school Lost and Found system where users can report lost items, claim found items, and manage a simple credits system for engagement.
 
 ---
@@ -104,6 +100,6 @@ git push origin feature-name
 
 ---
 
-## ⚖️ License
+##  License
 
 This project is created for educational purposes and FBLA competition submission.
