@@ -78,7 +78,7 @@ http://localhost:3000
 
 ##  Screenshots
 
-![Screenshot 1](homepage.png)  
+![Homepage](Frontend/Images/homepage.png)  
 ![Screenshot 2](link-to-your-screenshot-2.png)  
 
 ---
