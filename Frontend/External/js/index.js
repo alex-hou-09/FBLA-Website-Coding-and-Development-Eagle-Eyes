@@ -22,9 +22,24 @@ accordionBtns.forEach((btn) => {
 
 // Carousel functionality
 document.addEventListener("DOMContentLoaded", () => {
+  // OPTIMIZED: Pause/resume rotating text more efficiently
+  const text = document.querySelector('.rotating-text');
+  
+  if (text) {
+    text.addEventListener('mouseenter', () => {
+      text.style.animationPlayState = 'paused';
+    });
+
+    text.addEventListener('mouseleave', () => {
+      text.style.animationPlayState = 'running';
+    });
+  }
+
   const track = document.querySelector(".carousel-track");
   const nextBtn = document.querySelector(".carousel-btn.next");
   const prevBtn = document.querySelector(".carousel-btn.prev");
+
+  if (!track || !nextBtn || !prevBtn) return;
 
   let carouselImages = [];
   let currentIndex = 0;
@@ -37,14 +52,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
       carouselImages = data.items;
 
+      // OPTIMIZED: Use DocumentFragment to batch DOM operations
+      const fragment = document.createDocumentFragment();
+      
       carouselImages.forEach((item) => {
         const img = document.createElement("img");
         img.src = item.image;
         img.alt = item.name;
         img.className = "carousel-img";
-        track.appendChild(img);
+        // OPTIMIZED: Preload images for smoother transitions
+        img.loading = "eager";
+        fragment.appendChild(img);
       });
-
+      
+      track.appendChild(fragment);
       showImage(currentIndex);
       startAutoRotate();
     })
@@ -52,8 +73,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function showImage(index) {
     const images = track.querySelectorAll(".carousel-img");
-    images.forEach((img) => (img.style.opacity = "0"));
-    if (images[index]) images[index].style.opacity = "1";
+    images.forEach((img, i) => {
+      // OPTIMIZED: Only change opacity for images that need it
+      if (i === index && img.style.opacity !== "1") {
+        img.style.opacity = "1";
+      } else if (i !== index && img.style.opacity !== "0") {
+        img.style.opacity = "0";
+      }
+    });
   }
 
   function startAutoRotate() {
@@ -89,13 +116,19 @@ const slidePrevBtn = document.getElementById("prevBtn");
 const slideNextBtn = document.getElementById("nextBtn");
 const indicatorsContainer = document.getElementById("indicators");
 
-// Create indicators
-for (let i = 0; i < totalSlides; i++) {
-  const indicator = document.createElement("div");
-  indicator.classList.add("indicator");
-  if (i === 0) indicator.classList.add("active");
-  indicator.addEventListener("click", () => goToSlide(i));
-  indicatorsContainer.appendChild(indicator);
+if (indicatorsContainer && totalSlides > 0) {
+  // OPTIMIZED: Use DocumentFragment for batch DOM operations
+  const fragment = document.createDocumentFragment();
+  
+  for (let i = 0; i < totalSlides; i++) {
+    const indicator = document.createElement("div");
+    indicator.classList.add("indicator");
+    if (i === 0) indicator.classList.add("active");
+    indicator.addEventListener("click", () => goToSlide(i));
+    fragment.appendChild(indicator);
+  }
+  
+  indicatorsContainer.appendChild(fragment);
 }
 
 const indicators = document.querySelectorAll(".indicator");
@@ -130,65 +163,92 @@ function goToSlide(index) {
   updateSlides();
 }
 
-slidePrevBtn.addEventListener("click", prevSlide);
-slideNextBtn.addEventListener("click", nextSlide);
+if (slidePrevBtn && slideNextBtn) {
+  slidePrevBtn.addEventListener("click", prevSlide);
+  slideNextBtn.addEventListener("click", nextSlide);
+}
 
 document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft") prevSlide();
   if (e.key === "ArrowRight") nextSlide();
 });
 
-// Aurora wave background
+// OPTIMIZED: Aurora wave background with better performance
 const canvas = document.getElementById("floatingCanvas");
-const ctx = canvas.getContext("2d");
-const parent = canvas.parentElement;
-let width = (canvas.width = parent.offsetWidth);
-let height = (canvas.height = parent.offsetHeight);
-let time = 0;
+if (canvas) {
+  const ctx = canvas.getContext("2d", { alpha: false }); // Disable alpha for better performance
+  const parent = canvas.parentElement;
+  let width = (canvas.width = parent.offsetWidth);
+  let height = (canvas.height = parent.offsetHeight);
+  let time = 0;
+  let animationId;
 
-const colors = [
-  'rgba(119, 141, 169, 1)',
-  'rgba(224, 225, 221, 1)',
-  'rgba(65, 90, 119, 1)',
-  'rgba(119, 141, 169, 1)'
-];
+  const colors = [
+    'rgba(119, 141, 169, 1)',
+    'rgba(224, 225, 221, 1)',
+    'rgba(65, 90, 119, 1)',
+    'rgba(119, 141, 169, 1)'
+  ];
 
-function animate() {
-  const gradient = ctx.createLinearGradient(0, 0, 0, height);
-  gradient.addColorStop(0, "#415a77");
-  gradient.addColorStop(1, "#0a0a0a");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, width, height);
+  // OPTIMIZED: Use Intersection Observer to pause animation when not visible
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        if (!animationId) animate();
+      } else {
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+          animationId = null;
+        }
+      }
+    });
+  }, { threshold: 0.1 });
 
-  for (let i = 0; i < 4; i++) {
-    ctx.beginPath();
-    ctx.strokeStyle = colors[i];
-    ctx.lineWidth = 4;
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = colors[i];
-    
-    for (let x = 0; x <= width; x += 2) {
-      const y = height / 2 + 
-              Math.sin((x * 0.006) + time + i * 1.2) * 120 +
-              Math.sin((x * 0.012) + time * 0.7 + i * 0.8) * 80 +
-              Math.sin((x * 0.02) + time * 1.5 + i * 0.5) * 40;
+  observer.observe(canvas);
+
+  function animate() {
+    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, "#415a77");
+    gradient.addColorStop(1, "#0a0a0a");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath();
+      ctx.strokeStyle = colors[i];
+      ctx.lineWidth = 4;
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = colors[i];
       
-      if (x === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+      // OPTIMIZED: Reduce iterations for better performance (every 4 pixels instead of 2)
+      for (let x = 0; x <= width; x += 4) {
+        const y = height / 2 + 
+                Math.sin((x * 0.006) + time + i * 1.2) * 120 +
+                Math.sin((x * 0.012) + time * 0.7 + i * 0.8) * 80 +
+                Math.sin((x * 0.02) + time * 1.5 + i * 0.5) * 40;
+        
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
     }
-    ctx.stroke();
+
+    time += 0.015;
+    animationId = requestAnimationFrame(animate);
   }
 
-  time += 0.015;
-  requestAnimationFrame(animate);
+  animate();
+
+  // OPTIMIZED: Debounce resize event
+  let resizeTimeout;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      width = canvas.width = parent.offsetWidth;
+      height = canvas.height = parent.offsetHeight;
+    }, 150);
+  });
 }
-
-animate();
-
-window.addEventListener("resize", () => {
-  width = canvas.width = parent.offsetWidth;
-  height = canvas.height = parent.offsetHeight;
-});
 
 // Dynamic word animation
 document.addEventListener("DOMContentLoaded", () => {
