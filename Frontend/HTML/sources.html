@@ -1,335 +1,102 @@
-<!DOCTYPE html>
 <html lang="en-us">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WHHS Lost and Found</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
-  
-  <style>
-    :root {
-      --base: #e0e1dd;
-      --light: #f8f9fa;
-      --dark: #1b263b;
-      --verydark: #0d1b2a;
-    }
+  <head>
+    <title>WHHS Lost and Found</title>
+    <link rel="icon" type="image/x-icon" href="../Images/favicon.ico" />
+    <script src="../External/js/_script.js" defer></script>
+    <script src="../External/js/sources.js" defer></script>
+    <link rel="stylesheet" href="../External/CSS/_styles.css" />
+    <link rel="stylesheet" href="../External/CSS/sources.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
+      rel="stylesheet"
+    />
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-    body {
-      font-family: 'Quicksand', sans-serif;
-      background: linear-gradient(180deg, var(--light), var(--base));
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-    }
+  <body>
+    <header class="site-header">
+      <div class="header-left">
+        <a href="index.html" class="logo">
+          <img src="../Images/logo.png" alt="Home" />
+        </a>
 
-    .demo-container {
-      text-align: center;
-      width: 100%;
-      max-width: 1200px;
-    }
+        <nav class="nav-left">
+          <a href="index.html">Home</a>
+          <a href="browse.html">Found Items</a>
+          <a href="lost.html">Lost Reports</a>
+          <a href="report.html">Report</a>
+        </nav>
+      </div>
 
-    h1 {
-      color: var(--dark);
-      margin-bottom: 2rem;
-      font-size: 2.5rem;
-    }
+      <nav class="nav-right">
+        <a href="contact.html">Contact</a>
+        <a href="login.html">Log In</a>
+        <a href="sources.html">Sources</a>
+      </nav>
+    </header>
 
-    .lower-home-page {
-      display: flex;
-      justify-content: center;
-      position: relative;
-      width: 100%;
-      margin-bottom: 2rem;
-    }
+    <section>
+        <div>
+            Sources Page
+        </div>
+    </section>
 
-    .lower-home-circle {
-      background-color: white;
-      outline: 25px solid var(--base);
-      width: 600px;
-      height: 600px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Slides container */
-    .slides-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .slide {
-      position: absolute;
-      text-align: center;
-      padding: 2rem;
-      color: var(--dark);
-      max-width: 400px;
-      opacity: 0;
-      transform: translateX(100%);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-
-    .slide.active {
-      opacity: 1;
-      transform: translateX(0);
-      z-index: 2;
-    }
-
-    .slide.prev {
-      opacity: 0;
-      transform: translateX(-100%);
-    }
-
-    .slide h2 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      color: var(--dark);
-    }
-
-    .slide p {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      color: var(--dark);
-    }
-
-    /* Curved text container */
-    .curved-text {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    /* SVG animation */
-    .rotating-text {
-      animation: rotate 30s linear infinite;
-      transform-origin: center;
-    }
-
-    @keyframes rotate {
-      from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .curved-text text {
-      font-family: 'Quicksand', sans-serif;
-      font-weight: 600;
-      font-size: 20px;
-      fill: var(--dark);
-      letter-spacing: 2px;
-    }
-
-    /* Controls */
-    .controls {
-      margin-top: 2rem;
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    /* Navigation buttons inside circle */
-    .nav-button {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background-color: rgba(27, 38, 59, 0.7);
-      color: white;
-      border: none;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      z-index: 10;
-    }
-
-    .nav-button:hover {
-      background-color: rgba(13, 27, 42, 0.9);
-      transform: translateY(-50%) scale(1.1);
-    }
-
-    .nav-button:active {
-      transform: translateY(-50%) scale(0.95);
-    }
-
-    .nav-button.prev {
-      left: 40px;
-    }
-
-    .nav-button.next {
-      right: 40px;
-    }
-
-    /* Slide indicators */
-    .slide-indicators {
-      display: flex;
-      gap: 0.5rem;
-      justify-content: center;
-    }
-
-    .indicator {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background-color: var(--base);
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      border: 2px solid var(--dark);
-    }
-
-    .indicator.active {
-      background-color: var(--dark);
-    }
-  </style>
-</head>
-<body>
-  <div class="demo-container">
-    <h1>Interactive Circle Slideshow</h1>
-    
-    <div class="lower-home-page">
-      <div class="lower-home-circle">
-        <!-- Curved text SVG -->
-        <svg class="curved-text" viewBox="0 0 500 500">
-          <defs>
-            <path
-              id="circlePath"
-              d="M 250, 250 m -200, 0 a 200,200 0 1,1 400,0 a 200,200 0 1,1 -400,0"
-            />
-          </defs>
-          <g class="rotating-text">
-            <text>
-              <textPath href="#circlePath" startOffset="0%">
-                WALNUT'S OFFICIAL LOST AND FOUND • FIND LOST ITEMS • REPORT MISSING POSSESSIONS • EARN REWARDS • 
-              </textPath>
-            </text>
-          </g>
-        </svg>
-
-        <!-- Slides container -->
-        <div class="slides-container">
-          <!-- Navigation buttons inside circle -->
-          <button class="nav-button prev" id="prevBtn">‹</button>
-          <button class="nav-button next" id="nextBtn">›</button>
-          
-          <div class="slide active">
-            <h2>Eagle Eyes</h2>
-            <p>Your digital lost and found system. Browse items, report findings, and earn rewards!</p>
+    <footer>
+      <div class="footer-container">
+        <div class="row">
+          <!-- First Col -->
+          <div class="column">
+            <h4>Location</h4>
+            <ul>
+              <li>Walnut Hills High School</li>
+              <li>3250 Victory Parkway</li>
+              <li>Cincinnati, OH, 45207</li>
+            </ul>
           </div>
-          
-          <div class="slide">
-            <h2>Browse Items</h2>
-            <p>Search through our database of found items. Filter by category, location, and date to find your belongings.</p>
+          <!-- Second Col -->
+          <div class="column">
+            <h4>Web Dev</h4>
+            <ul>
+              <li>Alex Hou</li>
+            </ul>
           </div>
-          
-          <div class="slide">
-            <h2>Report Lost Items</h2>
-            <p>Lost something? Create a detailed report to help us match it with found items in our system.</p>
+          <!-- Third Col -->
+          <div class="column">
+            <h4>Navigation</h4>
+            <ul>
+              <li><a href="browse.html">Browse Items</a></li>
+              <li><a href="report.html">Report</a></li>
+              <li><a href="login.html">Log In</a></li>
+              <li><a href="#">Sources</a></li>
+            </ul>
           </div>
-          
-          <div class="slide">
-            <h2>Earn Rewards</h2>
-            <p>Help others find their belongings and earn points! Redeem rewards for school merchandise and privileges.</p>
+          <!-- 4th Col -->
+          <div class="column">
+            <h4>Contact Us</h4>
+            <ul>
+              <li><a href="contact.html">Contact Page</a></li>
+              <li><i>OR</i></li>
+              <li>ahou1@cincinnatips.org</li>
+            </ul>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Controls -->
-    <div class="controls">
-      <div class="slide-indicators" id="indicators"></div>
-    </div>
-  </div>
-
-  <script>
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    const totalSlides = slides.length;
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const indicatorsContainer = document.getElementById('indicators');
-
-    // Create indicators
-    for (let i = 0; i < totalSlides; i++) {
-      const indicator = document.createElement('div');
-      indicator.classList.add('indicator');
-      if (i === 0) indicator.classList.add('active');
-      indicator.addEventListener('click', () => goToSlide(i));
-      indicatorsContainer.appendChild(indicator);
-    }
-
-    const indicators = document.querySelectorAll('.indicator');
-
-    function updateSlides() {
-      slides.forEach((slide, index) => {
-        slide.classList.remove('active', 'prev');
-        if (index === currentSlide) {
-          slide.classList.add('active');
-        } else if (index < currentSlide) {
-          slide.classList.add('prev');
-        }
-      });
-
-      // Update indicators
-      indicators.forEach((indicator, index) => {
-        indicator.classList.toggle('active', index === currentSlide);
-      });
-    }
-
-    function nextSlide() {
-      currentSlide = (currentSlide + 1) % totalSlides;
-      updateSlides();
-    }
-
-    function prevSlide() {
-      currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-      updateSlides();
-    }
-
-    function goToSlide(index) {
-      currentSlide = index;
-      updateSlides();
-    }
-
-    // Event listeners
-    prevBtn.addEventListener('click', prevSlide);
-    nextBtn.addEventListener('click', nextSlide);
-
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') prevSlide();
-      if (e.key === 'ArrowRight') nextSlide();
-    });
-  </script>
-</body>
+    </footer>
+  </body>
 </html>

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en-us">
   <head>
     <title>WHHS Lost and Found</title>
@@ -8,45 +9,16 @@
     <link rel="stylesheet" href="../External/CSS/index.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
   </head>
 
   <body>
     <header class="site-header">
       <div class="header-left">
-        <!-- Logo = Home -->
         <a href="index.html" class="logo">
           <img src="../Images/logo.png" alt="Home" />
         </a>
 
-        <!-- Left navigation -->
         <nav class="nav-left">
           <a href="index.html">Home</a>
           <a href="browse.html">Found Items</a>
@@ -55,7 +27,6 @@
         </nav>
       </div>
 
-      <!-- Right navigation -->
       <nav class="nav-right">
         <a href="contact.html">Contact</a>
         <a href="login.html">Log In</a>
@@ -68,6 +39,9 @@
         <div class="top-div">
           <div class="left-home">
             <h2>Eagle Eyes</h2>
+            <h6>
+              Walnut's <span class="dynamic-word">Official</span> Lost and Found
+            </h6>
             <div class="items-buttons">
               <a href="browse.html">
                 <button class="search-lost-items-btn">
@@ -83,10 +57,8 @@
               </a>
             </div>
           </div>
-          <div class="right-home carousel animate-image">
-            <div class="carousel-track">
-              <!-- Carousel images will appear here -->
-            </div>
+          <div class="right-home carousel">
+            <div class="carousel-track"></div>
             <button class="carousel-btn prev">&#10094;</button>
             <button class="carousel-btn next">&#10095;</button>
           </div>
@@ -96,197 +68,159 @@
 
     <section class="info-section">
       <div class="lower-home-page">
-        <canvas id="floatingCanvas"></canvas>
-        <div class="lower-home-circle">
-          <!-- Curved text SVG -->
+        <div class="lower-home-circle animate-image">
           <svg class="curved-text" viewBox="0 0 500 500">
             <defs>
-              <path
-                id="circlePath"
-                d="M 250,250 m -200,0 a 200,200 0 1,1 400,0 a 200,200 0 1,1 -400,0"
-              />
+              <path id="circlePath" d="M 250,250 m -200,0 a 200,200 0 1,1 400,0 a 200,200 0 1,1 -400,0" />
             </defs>
-
             <g class="rotating-text">
               <text>
                 <textPath href="#circlePath">
-                  WALNUT HILLS LOST AND FOUND • REPORT ITEMS • CLAIM SECURELY •
-                  EARN REWARDS • BLAH BLAH BLAH •
+                  HOW IT WORKS -•- CLAIMING ITEMS -•- PICKUP INFORMATION -•-
+                  REWARDS SYSTEM -•- WHHS L&F --•--
                 </textPath>
               </text>
             </g>
           </svg>
 
-          <!-- Slides container -->
           <div class="slides-container">
-            <!-- Navigation buttons -->
             <button class="nav-button prev" id="prevBtn">‹</button>
             <button class="nav-button next" id="nextBtn">›</button>
 
             <div class="slide active">
-              <h2>Eagle Eyes</h2>
+              <h2>HOW IT WORKS</h2>
               <p>
-                Your digital lost and found system. Browse items, report
-                findings, and earn rewards.
+                Through this website, the WHHS Lost and Found system is now
+                digitized! Students can browse for their own lost items as well
+                as report items they may have found or lost themselves
               </p>
             </div>
 
             <div class="slide">
-              <h2>Browse Items</h2>
+              <h2>CLAIMING ITEMS</h2>
               <p>
-                Search by category, location, and date to recover lost
-                belongings.
+                To claim an item, students submit a request on the Found Items
+                page with their name, student ID, and verification details. The
+                claim is then sent to an administrator for approval or denial.
               </p>
             </div>
 
             <div class="slide">
-              <h2>Report Lost Items</h2>
+              <h2>PICKUP INFORMATION</h2>
               <p>
-                Submit detailed reports to help match lost and found items
-                faster.
+                All items should be picked up and dropped off at the 2207 Main
+                Office.
               </p>
             </div>
 
             <div class="slide">
-              <h2>Earn Rewards</h2>
-              <p>Turn in items, earn credits, and redeem school rewards.</p>
+              <h2>REWARDS SYSTEM</h2>
+              <p>
+                Turn in items! After that item is claimed by another student,
+                you earn credits and can then redeem school rewards.
+              </p>
+            </div>
+
+            <div class="slide">
+              <h2>QUESTIONS?</h2>
+              <p>
+                Scroll down to our Frequently Asked Questions section or go
+                visit the Contact page to get in touch with an admin.
+              </p>
             </div>
           </div>
 
-          <!-- Indicators -->
           <div class="slide-indicators" id="indicators"></div>
+        </div>
+
+        <div class="faq">
+          <div class="container animate-image">
+            <h2>FREQUENTLY ASKED Q'S</h2>
+            <div class="accordion-container">
+              <div class="accordion-item">
+                <button class="accordion-btn">
+                  Question 1
+                  <div class="icons">
+                    <img class="plus-icon btn-icon" src="../Images/plus-icon.png" alt="" />
+                    <img class="minus-icon btn-icon" src="../Images/minus-icon.png" alt="" />
+                  </div>
+                </button>
+                <div class="accordion-description">
+                  <p>Answer 1</p>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <button class="accordion-btn">
+                  Question 2
+                  <div class="icons">
+                    <img class="plus-icon btn-icon" src="../Images/plus-icon.png" alt="" />
+                    <img class="minus-icon btn-icon" src="../Images/minus-icon.png" alt="" />
+                  </div>
+                </button>
+                <div class="accordion-description">
+                  <p>Answer 2</p>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <button class="accordion-btn">
+                  Question 3
+                  <div class="icons">
+                    <img class="plus-icon btn-icon" src="../Images/plus-icon.png" alt="" />
+                    <img class="minus-icon btn-icon" src="../Images/minus-icon.png" alt="" />
+                  </div>
+                </button>
+                <div class="accordion-description">
+                  <p>Answer 3</p>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <button class="accordion-btn">
+                  Question 4
+                  <div class="icons">
+                    <img class="plus-icon btn-icon" src="../Images/plus-icon.png" alt="" />
+                    <img class="minus-icon btn-icon" src="../Images/minus-icon.png" alt="" />
+                  </div>
+                </button>
+                <div class="accordion-description">
+                  <p>Answer 4</p>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <button class="accordion-btn">
+                  Where do I go if I have more questions that aren't already
+                  answered here?
+                  <div class="icons">
+                    <img class="plus-icon btn-icon" src="../Images/plus-icon.png" alt="" />
+                    <img class="minus-icon btn-icon" src="../Images/minus-icon.png" alt="" />
+                  </div>
+                </button>
+                <div class="accordion-description">
+                  <p>
+                    Visit our <a href="contact.html"><i>Contact</i></a> page to
+                    get in touch with one of our admins! After they review and
+                    answer your contact submission, their answers will be listed
+                    on your user homepage.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="faq">
-      <h1 id="faqhead">Frequently Asked Questions</h1>
-
-      <div class="container">
-        <div class="accordion-container">
-          <div class="accordion-item">
-            <button class="accordion-btn">
-              Question 1
-              <div class="icons">
-                <img
-                  class="plus-icon btn-icon"
-                  src="../Images/plus-icon.png"
-                  alt=""
-                />
-                <img
-                  class="minus-icon btn-icon"
-                  src="../Images/minus-icon.png"
-                  alt=""
-                />
-              </div>
-            </button>
-            <div class="accordion-description">
-              <p>Answer 1</p>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <button class="accordion-btn">
-              Question 2
-              <div class="icons">
-                <img
-                  class="plus-icon btn-icon"
-                  src="../Images/plus-icon.png"
-                  alt=""
-                />
-                <img
-                  class="minus-icon btn-icon"
-                  src="../Images/minus-icon.png"
-                  alt=""
-                />
-              </div>
-            </button>
-            <div class="accordion-description">
-              <p>Answer 2</p>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <button class="accordion-btn">
-              Question 3
-              <div class="icons">
-                <img
-                  class="plus-icon btn-icon"
-                  src="../Images/plus-icon.png"
-                  alt=""
-                />
-                <img
-                  class="minus-icon btn-icon"
-                  src="../Images/minus-icon.png"
-                  alt=""
-                />
-              </div>
-            </button>
-            <div class="accordion-description">
-              <p>Answer 3</p>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <button class="accordion-btn">
-              Question 4
-              <div class="icons">
-                <img
-                  class="plus-icon btn-icon"
-                  src="../Images/plus-icon.png"
-                  alt=""
-                />
-                <img
-                  class="minus-icon btn-icon"
-                  src="../Images/minus-icon.png"
-                  alt=""
-                />
-              </div>
-            </button>
-            <div class="accordion-description">
-              <p>Answer 4</p>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <button class="accordion-btn">
-              Where do I go if I have more questions that aren't already
-              answered here?
-              <div class="icons">
-                <img
-                  class="plus-icon btn-icon"
-                  src="../Images/plus-icon.png"
-                  alt=""
-                />
-                <img
-                  class="minus-icon btn-icon"
-                  src="../Images/minus-icon.png"
-                  alt=""
-                />
-              </div>
-            </button>
-            <div class="accordion-description">
-              <p>
-                Visit our <a href="contact.html"><i>Contact</i></a> page to get
-                in touch with one of our admins! After they review and answer
-                your contact submission, their answers will be listed on your
-                user homepage.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <p id="faqsub">
-        Have a question thats not already listed? Drop by the contact page to
-        get in touch with someone that can help!
-      </p>
+      <canvas id="floatingCanvas"></canvas>
+      <h1 id="faqhead">Questions?</h1>
     </section>
 
     <footer>
       <div class="footer-container">
         <div class="row">
-          <!-- First Col -->
           <div class="column">
             <h4>Location</h4>
             <ul>
@@ -295,24 +229,24 @@
               <li>Cincinnati, OH, 45207</li>
             </ul>
           </div>
-          <!-- Second Col -->
+
           <div class="column">
             <h4>Web Dev</h4>
             <ul>
               <li>Alex Hou</li>
             </ul>
           </div>
-          <!-- Third Col -->
+
           <div class="column">
             <h4>Navigation</h4>
             <ul>
               <li><a href="browse.html">Browse Items</a></li>
               <li><a href="report.html">Report</a></li>
               <li><a href="login.html">Log In</a></li>
-              <li><a href="#">Sources</a></li>
+              <li><a href="sources.html">Sources</a></li>
             </ul>
           </div>
-          <!-- 4th Col -->
+
           <div class="column">
             <h4>Contact Us</h4>
             <ul>
