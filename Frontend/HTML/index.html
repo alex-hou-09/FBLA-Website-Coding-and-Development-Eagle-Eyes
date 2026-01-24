@@ -96,72 +96,65 @@
 
     <section class="info-section">
       <div class="lower-home-page">
+        <canvas id="floatingCanvas"></canvas>
         <div class="lower-home-circle">
-          <div class="system-information-grid">
-            <div class="info-box animate-image">
-              <p>
-                <span class="header-info">How it Works</span><br />
-                Through this website, the WHHS Lost and Found system is now
-                digitized! Students can browse for their own lost items as well
-                as report items they may have found or lost themselves.
-              </p>
-            </div>
-            <div class="photo-box animate-image">
-              <img src="../Images/1-icon.png" alt="" />
-            </div>
+          <!-- Curved text SVG -->
+          <svg class="curved-text" viewBox="0 0 500 500">
+            <defs>
+              <path
+                id="circlePath"
+                d="M 250,250 m -200,0 a 200,200 0 1,1 400,0 a 200,200 0 1,1 -400,0"
+              />
+            </defs>
 
-            <div class="photo-box rht animate-image">
-              <img src="../Images/2-icon.jpg" alt="" />
-            </div>
-            <div class="info-box rht animate-image">
-              <p>
-                <span class="header-info">Claiming Items</span><br />
-                To claim an item, students must first visit the Found Items page
-                to submit a request for the item. They will then be asked for
-                their name and student ID as well as some verification questions
-                (unique marks, approximate date lost, etc) to ensure the item is
-                returned to its rightful owner. Upon submitting, your claim will
-                be set as 'Pending' and given to an administrator to approve or
-                deny.
-              </p>
-            </div>
+            <g class="rotating-text">
+              <text>
+                <textPath href="#circlePath">
+                  WALNUT HILLS LOST AND FOUND • REPORT ITEMS • CLAIM SECURELY •
+                  EARN REWARDS • BLAH BLAH BLAH •
+                </textPath>
+              </text>
+            </g>
+          </svg>
 
-            <div class="info-box animate-image">
-              <p>
-                <span class="header-info">Pickup Information</span><br />
-                When one of your claims is approved, visit the main office,
-                2207, to pick up your item. The office is open Monday - Friday
-                from 7:30 AM to 3:15 PM.
-              </p>
-            </div>
-            <div class="photo-box animate-image">
-              <img class="loco" src="../Images/3-icon.png" alt="" />
-            </div>
+          <!-- Slides container -->
+          <div class="slides-container">
+            <!-- Navigation buttons -->
+            <button class="nav-button prev" id="prevBtn">‹</button>
+            <button class="nav-button next" id="nextBtn">›</button>
 
-            <div class="photo-box rht animate-image">
-              <img src="../Images/4-icon.png" alt="" />
-            </div>
-            <div class="info-box rht animate-image">
+            <div class="slide active">
+              <h2>Eagle Eyes</h2>
               <p>
-                <span class="header-info">Unclaimed Property</span><br />
-                To avoid an abundance of lost items, property that has been left
-                in the lost and found for more than 60 days will be donated.
+                Your digital lost and found system. Browse items, report
+                findings, and earn rewards.
               </p>
             </div>
 
-            <div class="info-box animate-image">
+            <div class="slide">
+              <h2>Browse Items</h2>
               <p>
-                <span class="header-info">Reward System</span><br />
-                When someone claims a lost item that you submitted to the
-                website, you will receive 10 credits. Credits function like WHHS
-                Eagle Bucks, which you can spend in the lost and found shop for
-                things like candy, gift cards, and tickets to school events.
+                Search by category, location, and date to recover lost
+                belongings.
               </p>
             </div>
-            <div class="photo-box animate-image">
-              <img src="../Images/5-icon.png" alt="" />
+
+            <div class="slide">
+              <h2>Report Lost Items</h2>
+              <p>
+                Submit detailed reports to help match lost and found items
+                faster.
+              </p>
+            </div>
+
+            <div class="slide">
+              <h2>Earn Rewards</h2>
+              <p>Turn in items, earn credits, and redeem school rewards.</p>
             </div>
           </div>
+
+          <!-- Indicators -->
+          <div class="slide-indicators" id="indicators"></div>
         </div>
       </div>
     </section>
