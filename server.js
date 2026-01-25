@@ -2,6 +2,7 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const session = require("express-session");
+const multer = require("multer");
 
 const app = express();
 const PORT = 3000;
@@ -23,10 +24,47 @@ app.use(
 );
 
 // ===========================
+//! Multer Configuration for File Uploads
+// ===========================
+
+// Create uploads directory if it doesn't exist
+const UPLOADS_DIR = path.join(__dirname, "uploads");
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
+
+// Configure multer for temporary storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, UPLOADS_DIR);
+  },
+  filename: (req, file, cb) => {
+    // Generate unique filename: timestamp-originalname
+    const uniqueName = Date.now() + "-" + file.originalname;
+    cb(null, uniqueName);
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    // Accept only images
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed"));
+    }
+  },
+});
+
+// ===========================
 //! File Paths
 // ===========================
 
 const DATA_DIR = path.join(__dirname, "Data");
+const IMAGES_DIR = path.join(__dirname, "Frontend", "Images");
+
 const FILES = {
   items: path.join(DATA_DIR, "_item-information.json"),
   users: path.join(DATA_DIR, "user-information.json"),
@@ -136,11 +174,34 @@ app.post("/api/logout", (req, res) => {
 });
 
 // ===========================
-//! Claims Routes
+//! Claims Routes (Updated with Image Upload)
 // ===========================
 
-app.post("/api/claims", (req, res) => {
-  const newClaim = req.body;
+app.post("/api/claims", upload.single("image"), (req, res) => {
+  const newClaim = {
+    typeOfSubmission: req.body.typeOfSubmission,
+    studentEmail: req.body.studentEmail,
+    studentID: req.body.studentID,
+    itemName: req.body.itemName,
+    category: req.body.category,
+    color: req.body.color,
+    description: req.body.description,
+  };
+
+  // Add type-specific fields
+  if (req.body.typeOfSubmission === "found-report") {
+    newClaim.locationFound = req.body.locationFound;
+    newClaim.dateFound = req.body.dateFound;
+  } else if (req.body.typeOfSubmission === "lost-report") {
+    newClaim.lastSeen = req.body.lastSeen;
+  }
+
+  // Store the temporary upload path if image was uploaded
+  if (req.file) {
+    newClaim.tempImagePath = req.file.path;
+    newClaim.originalImageName = req.file.filename;
+  }
+
   const data = readJSON(FILES.pending, { pending: [] });
   data.pending.push(newClaim);
   writeJSON(FILES.pending, data);
@@ -228,33 +289,77 @@ app.post("/api/contact/respond", (req, res) => {
 });
 
 // ===========================
-//! Claim Decision Route
+//! Claim Decision Route (Updated with Image Handling)
 // ===========================
 app.post("/api/claims/decision", (req, res) => {
   try {
     const { submission, decision } = req.body;
 
-    // Ensure all files exist
     ensureFile(FILES.pending, "pending");
     ensureFile(FILES.itemClaims, "claims");
     ensureFile(FILES.lostItems, "lost");
     ensureFile(FILES.items, "items");
     ensureFile(FILES.claimedItems, "claimedItems");
 
-    // Remove from pending by matching type, itemID, and studentEmail
     const pendingData = readJSON(FILES.pending, { pending: [] });
+    
+    // Find the exact submission to get image path
+    const submissionIndex = pendingData.pending.findIndex(
+      (p) =>
+        p.typeOfSubmission === submission.typeOfSubmission &&
+        p.studentEmail === submission.studentEmail &&
+        (p.itemID === submission.itemID || p.itemName === submission.itemName)
+    );
+
+    let imagePath = "";
+    
+    if (submissionIndex !== -1) {
+      const foundSubmission = pendingData.pending[submissionIndex];
+      
+      // Move image from uploads to Images folder if it exists and decision is approve
+      if (decision === "approve" && foundSubmission.tempImagePath) {
+        const finalImageName = foundSubmission.originalImageName;
+        const finalImagePath = path.join(IMAGES_DIR, finalImageName);
+        
+        try {
+          // Copy file from uploads to Images
+          fs.copyFileSync(foundSubmission.tempImagePath, finalImagePath);
+          
+          // Store relative path from HTML files (Frontend/HTML/)
+          imagePath = `../Images/${finalImageName}`;
+          
+          // Delete temp file
+          fs.unlinkSync(foundSubmission.tempImagePath);
+          
+          console.log(`✓ Image moved successfully: ${finalImageName}`);
+          console.log(`✓ Saved to: Frontend/Images/${finalImageName}`);
+          console.log(`✓ Path stored in DB: ${imagePath}`);
+        } catch (err) {
+          console.error("Error moving image:", err);
+        }
+      } else if (foundSubmission.tempImagePath) {
+        // If denied, just delete the temp file
+        try {
+          fs.unlinkSync(foundSubmission.tempImagePath);
+          console.log(`✓ Temp image deleted (report was denied)`);
+        } catch (err) {
+          console.error("Error deleting temp image:", err);
+        }
+      }
+    }
+
+    // Remove from pending
     pendingData.pending = pendingData.pending.filter(
       (p) =>
         !(
           p.typeOfSubmission === submission.typeOfSubmission &&
-          p.itemID === submission.itemID &&
-          p.studentEmail === submission.studentEmail
+          p.studentEmail === submission.studentEmail &&
+          (p.itemID === submission.itemID || p.itemName === submission.itemName)
         ),
     );
 
     if (decision === "approve") {
       if (submission.typeOfSubmission === "item-claim") {
-        // Save approved claim history
         const claims = readJSON(FILES.itemClaims, { claims: [] });
         claims.claims.push({
           ...submission,
@@ -262,7 +367,6 @@ app.post("/api/claims/decision", (req, res) => {
         });
         writeJSON(FILES.itemClaims, claims);
 
-        // Move item from items -> claimed-items
         const itemsData = readJSON(FILES.items, { items: [] });
         const claimedData = readJSON(FILES.claimedItems, { claimedItems: [] });
 
@@ -276,24 +380,16 @@ app.post("/api/claims/decision", (req, res) => {
 
         claimedData.claimedItems.push({
           ...claimedItem,
-
-          // KEEP original submitter (finder)
           submitterEmail: claimedItem.submitterEmail,
           submitterID: claimedItem.submitterID,
-
-          // ADD claimer info separately
           claimedByEmail: submission.studentEmail,
           claimedByID: submission.studentID,
-
           claimedAt: new Date().toISOString(),
         });
 
         writeJSON(FILES.claimedItems, claimedData);
-
-        // AWARD +10 CREDITS HERE
         awardCredits(claimedItem.submitterID, 10);
 
-        // Remove from active items
         itemsData.items = itemsData.items.filter(
           (item) => String(item.id) !== String(submission.itemID),
         );
@@ -303,7 +399,10 @@ app.post("/api/claims/decision", (req, res) => {
 
       if (submission.typeOfSubmission === "lost-report") {
         const lost = readJSON(FILES.lostItems, { lost: [] });
-        lost.lost.push(submission);
+        lost.lost.push({
+          ...submission,
+          image: imagePath,
+        });
         writeJSON(FILES.lostItems, lost);
       }
 
@@ -317,8 +416,8 @@ app.post("/api/claims/decision", (req, res) => {
           description: submission.description,
           locationFound: submission.locationFound,
           dateFound: submission.dateFound,
-          image: submission.UPLOADIMAGE || "",
-          status: "Pending", // item not claimed yet
+          image: imagePath,
+          status: "Pending",
           submitterEmail: submission.studentEmail,
           submitterID: submission.studentID,
         });
@@ -345,7 +444,6 @@ app.get("/api/user/item-claims", (req, res) => {
   const pendingData = readJSON(FILES.pending, { pending: [] });
   const approvedData = readJSON(FILES.itemClaims, { claims: [] });
 
-  // Filter only item-claims for this user
   const pendingClaims = pendingData.pending
     .filter(
       (c) =>
@@ -394,15 +492,12 @@ app.delete("/api/item-claims/:itemID/:email", (req, res) => {
   res.json({ success: true });
 });
 
-//! NEW
-
 app.get("/api/user/turned-in-items", (req, res) => {
   if (!req.session.user) return res.status(401).json({ success: false });
 
   const userEmail = req.session.user.email.toLowerCase();
   const userID = String(req.session.user.id);
 
-  // 1. Pending reports
   const pendingData = readJSON(FILES.pending, { pending: [] });
   const pendingReports = pendingData.pending
     .filter(
@@ -413,8 +508,6 @@ app.get("/api/user/turned-in-items", (req, res) => {
     )
     .map((r) => ({ ...r, status: "Pending" }));
 
-  // 2. Approved items (Waiting / Claimed)
-  // 2. Approved items (Waiting)
   const itemsData = readJSON(FILES.items, { items: [] });
   const waitingReports = itemsData.items
     .filter(
@@ -424,7 +517,6 @@ app.get("/api/user/turned-in-items", (req, res) => {
     )
     .map((item) => ({ ...item, status: "Waiting" }));
 
-  // 3. Claimed items
   const claimedData = readJSON(FILES.claimedItems, { claimedItems: [] });
   const claimedReports = claimedData.claimedItems
     .filter(
@@ -458,7 +550,6 @@ app.delete("/api/claimed-items/:id", (req, res) => {
   res.json({ success: true });
 });
 
-// Get all answered contact submissions for current user
 app.get("/api/user/contact-responses", (req, res) => {
   if (!req.session.user) return res.status(401).json({ success: false });
 
@@ -475,7 +566,6 @@ app.get("/api/user/contact-responses", (req, res) => {
   res.json({ success: true, responses: userResponses });
 });
 
-// Delete an answered contact submission
 app.delete("/api/contact-responses/:email/:subject", (req, res) => {
   const { email, subject } = req.params;
   const decodedEmail = decodeURIComponent(email);
@@ -537,12 +627,10 @@ app.get("/api/items/latest", (req, res) => {
   res.json({ success: true, items: latestItems });
 });
 
-// Replace the existing app.post("/api/user/purchase") with this:
 app.post("/api/user/purchase", (req, res) => {
   const { itemKey, cost, email, id } = req.body;
 
   try {
-    // 1. Get current user credits from user-information.json
     const usersData = readJSON(FILES.users, { users: [] });
 
     const user = usersData.users.find(
@@ -562,16 +650,13 @@ app.post("/api/user/purchase", (req, res) => {
       return res.json({ success: false, error: "Insufficient credits" });
     }
 
-    // 2. Deduct credits
     user.credits = currentCredits - cost;
     writeJSON(FILES.users, usersData);
 
-    // 3. Add to purchased.json
     const purchasedPath = path.join(DATA_DIR, "purchased.json");
     let purchasedData;
 
     if (!fs.existsSync(purchasedPath)) {
-      // Create file if it doesn't exist
       purchasedData = {
         candy: [],
         tickets: [],
@@ -593,7 +678,6 @@ app.post("/api/user/purchase", (req, res) => {
 
     writeJSON(purchasedPath, purchasedData);
 
-    // Update session
     if (req.session.user) {
       req.session.user.credits = user.credits;
     }
@@ -605,13 +689,10 @@ app.post("/api/user/purchase", (req, res) => {
   }
 });
 
-// Add these routes to your existing server.js file
-
 // ===========================
 //! Purchases Routes
 // ===========================
 
-// Get all purchases
 app.get("/api/purchases", (req, res) => {
   const purchasedPath = path.join(DATA_DIR, "purchased.json");
   
@@ -633,7 +714,6 @@ app.get("/api/purchases", (req, res) => {
   res.json(purchasedData);
 });
 
-// Mark purchase as fulfilled (removes it from the list)
 app.post("/api/purchases/fulfill", (req, res) => {
   const { itemKey, email, id, purchasedAt } = req.body;
   
@@ -652,7 +732,6 @@ app.post("/api/purchases/fulfill", (req, res) => {
     return res.status(400).json({ success: false, error: "Invalid item key" });
   }
 
-  // Remove the specific purchase from the array
   purchasedData[itemKey] = purchasedData[itemKey].filter(
     (p) => !(p.email === email && String(p.ID) === String(id) && p.purchasedAt === purchasedAt)
   );
