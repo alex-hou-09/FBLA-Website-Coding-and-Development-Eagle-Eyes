@@ -37,9 +37,8 @@
       </div>
 
       <nav class="nav-right">
-        <a href="contact.html">Contact</a>
-        <a href="login.html">Log In</a>
         <a href="sources.html">Sources</a>
+        <a href="login.html">Log In</a>
       </nav>
     </header>
 
@@ -60,8 +59,8 @@
                 <circle r="20px" cx="195" cy="160" r="8" fill="black" />
               </g>
 
-              <circle cx="125" cy="170" r="10" class="dot" />
-              <circle cx="205" cy="170" r="10" class="dot" />
+              <circle cx="100" cy="160" r="10" class="dot" />
+              <circle cx="180" cy="160" r="10" class="dot" />
             </svg>
 
             <h6>
@@ -283,7 +282,52 @@
 
     <section class="faq">
       <canvas id="floatingCanvas"></canvas>
-      <h1 id="faqhead">Questions?</h1>
+      <div class="contact-section">
+        <div class="decor-layer decor-a"></div>
+        <div class="decor-layer decor-b"></div>
+
+        <div class="contact-container">
+          <div class="contact-card">
+            <h1 id="head">QUESTIONS?</h1>
+
+            <form class="contact-form">
+              <div class="form-grid">
+                <label>
+                  CPS School Email
+                  <input type="email" name="email" required />
+                </label>
+
+                <label>
+                  Student ID
+                  <input type="text" name="studentId" required />
+                </label>
+
+                <label>
+                  Subject
+                  <input type="text" name="subject" required />
+                </label>
+
+                <label>
+                  Category
+                  <select name="category" required>
+                    <option value="">Select</option>
+                    <option>General Question</option>
+                    <option>Item Claim Issue</option>
+                    <option>Bug Report</option>
+                  </select>
+                </label>
+
+                <label class="full">
+                  Message
+                  <textarea name="message" rows="5" required></textarea>
+                </label>
+              </div>
+
+              <button class="contact-button" type="submit">Send</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </section>
 
     <footer>

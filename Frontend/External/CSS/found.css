@@ -1,6 +1,7 @@
 .report-section {
   padding: 5%;
   font-family: "Quicksand", sans-serif;
+  overflow:hidden;
 }
 
 .report-layout {
@@ -81,40 +82,24 @@ button {
   position: absolute;
 }
 
-.circle-1 {
-  background-color: var(--medium);
-  width: clamp(120px, 33vw, 2000px);
-  height: clamp(120px, 33vw, 2000px);
-  z-index: 4;
-  right: -24%;
-  bottom: 17%;
-}
 
 .circle-2 {
   background-color: var(--dark);
-  width: clamp(140px, 38vw, 2000px);
-  height: clamp(140px, 38vw, 2000px);
-  z-index: 3;
-  right: -10%;
-  bottom: -5%;
+  width: clamp(140px, 82vw, 99000px);
+  height: clamp(140px, 82vw, 99000px);
+  z-index: -1;
+  right: -38%;
+  bottom: -90%;
 }
 
-.circle-3 {
-  background-color: var(--verydark);
-  width: clamp(200px, 43vw, 2000px);
-  height: clamp(200px, 43vw, 2000px);
-  z-index: 2;
-  right: -30%;
-  bottom: -17%;
-}
 
 .circle-4 {
   background-color: var(--base);
-  width: clamp(200px, 43vw, 2000px);
-  height: clamp(200px, 43vw, 2000px);
-  z-index: 1;
-  right: -25%;
-  bottom: 10%;
+  width: clamp(200px, 67vw, 99000px);
+  height: clamp(200px, 67vw, 99000px);
+  z-index: -2;
+  right: -45%;
+  bottom: 25%;
 }
 
 @media (max-width: 900px) {

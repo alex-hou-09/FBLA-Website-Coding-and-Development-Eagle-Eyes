@@ -103,6 +103,10 @@
   line-height: 1;
 }
 
+.panel-content h2{
+  font-weight: 600;
+}
+
 /* White text fixes */
 .right-panel h2,
 .right-panel p,

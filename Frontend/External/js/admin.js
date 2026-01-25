@@ -270,6 +270,76 @@ function submitDecision(submission, decision) {
 }
 
 /* ============================
+   PURCHASES
+============================ */
+function loadPurchases() {
+  fetch("/api/purchases")
+    .then((res) => res.json())
+    .then((data) => {
+      renderPurchases("candyPurchasesList", data.candy || [], "candy");
+      renderPurchases("ticketsPurchasesList", data.tickets || [], "tickets");
+      renderPurchases("cardsPurchasesList", data.cards || [], "cards");
+    })
+    .catch((err) => console.error("Failed to load purchases:", err));
+}
+
+function renderPurchases(containerId, purchases, type) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+
+  if (!purchases.length) {
+    const textMap = {
+      "candy": "No candy purchases yet.",
+      "tickets": "No raffle ticket purchases yet.",
+      "cards": "No gift card purchases yet."
+    };
+    container.innerHTML = `<p>${textMap[type]}</p>`;
+    return;
+  }
+
+  purchases.forEach((purchase) => {
+    const row = document.createElement("div");
+    row.className = "row-new purchase-row";
+    
+    const purchaseDate = new Date(purchase.purchasedAt);
+    const formattedDate = purchaseDate.toLocaleDateString() + " " + purchaseDate.toLocaleTimeString();
+
+    row.innerHTML = `
+      <div class="purchase-content">
+        <strong>Student:</strong> ${purchase.email} (ID: ${purchase.ID})<br>
+        <strong>Purchased:</strong> ${formattedDate}
+        <div class="purchase-buttons">
+          <button class="fulfilled-btn">Mark Fulfilled</button>
+        </div>
+      </div>
+    `;
+
+    row.querySelector(".fulfilled-btn").onclick = () => {
+      fulfillPurchase(type, purchase.email, purchase.ID, purchase.purchasedAt);
+    };
+
+    container.appendChild(row);
+  });
+}
+
+function fulfillPurchase(itemKey, email, id, purchasedAt) {
+  fetch("/api/purchases/fulfill", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ itemKey, email, id, purchasedAt }),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Failed to fulfill purchase");
+      return res.json();
+    })
+    .then(() => loadPurchases())
+    .catch((err) => {
+      console.error(err);
+      alert("Failed to fulfill purchase");
+    });
+}
+
+/* ============================
    SIDEBAR NAVIGATION
 ============================ */
 function setupSidebarNavigation() {
@@ -289,6 +359,7 @@ function setupSidebarNavigation() {
       const label = btn.textContent.trim();
       if (label === "Contact Messages") renderContactMessages();
       if (label === "Claims") loadClaims();
+      if (label === "Purchases") loadPurchases();
     });
   });
 }

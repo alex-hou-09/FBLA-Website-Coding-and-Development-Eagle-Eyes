@@ -19,7 +19,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 24 * 60 * 60 * 1000 }, // 1 day
-  })
+  }),
 );
 
 // ===========================
@@ -68,7 +68,7 @@ function awardCredits(userID, amount) {
   const usersData = readJSON(FILES.users, { users: [] });
 
   const user = usersData.users.find(
-    (u) => String(u.id) === String(userID) && u.userType === "Student"
+    (u) => String(u.id) === String(userID) && u.userType === "Student",
   );
 
   if (!user) return;
@@ -103,7 +103,7 @@ app.post("/api/login", (req, res) => {
   const data = readJSON(FILES.users, { users: [] });
 
   const user = data.users.find(
-    (u) => u.email === email && String(u.id) === String(id)
+    (u) => u.email === email && String(u.id) === String(id),
   );
   if (!user) return res.json({ success: false });
 
@@ -211,7 +211,7 @@ app.post("/api/contact/respond", (req, res) => {
       m.email === message.email &&
       m.studentId === message.studentId &&
       m.subject === message.subject &&
-      m.message === message.message
+      m.message === message.message,
   );
 
   if (index === -1) {
@@ -249,7 +249,7 @@ app.post("/api/claims/decision", (req, res) => {
           p.typeOfSubmission === submission.typeOfSubmission &&
           p.itemID === submission.itemID &&
           p.studentEmail === submission.studentEmail
-        )
+        ),
     );
 
     if (decision === "approve") {
@@ -267,7 +267,7 @@ app.post("/api/claims/decision", (req, res) => {
         const claimedData = readJSON(FILES.claimedItems, { claimedItems: [] });
 
         const claimedItem = itemsData.items.find(
-          (item) => String(item.id) === String(submission.itemID)
+          (item) => String(item.id) === String(submission.itemID),
         );
 
         if (!claimedItem) {
@@ -295,7 +295,7 @@ app.post("/api/claims/decision", (req, res) => {
 
         // Remove from active items
         itemsData.items = itemsData.items.filter(
-          (item) => String(item.id) !== String(submission.itemID)
+          (item) => String(item.id) !== String(submission.itemID),
         );
 
         writeJSON(FILES.items, itemsData);
@@ -351,7 +351,7 @@ app.get("/api/user/item-claims", (req, res) => {
       (c) =>
         c.typeOfSubmission === "item-claim" &&
         (c.studentEmail.toLowerCase() === userEmail ||
-          String(c.studentID) === userID)
+          String(c.studentID) === userID),
     )
     .map((c) => ({ ...c, status: "Pending" }));
 
@@ -360,7 +360,7 @@ app.get("/api/user/item-claims", (req, res) => {
       (c) =>
         c.typeOfSubmission === "item-claim" &&
         (c.studentEmail.toLowerCase() === userEmail ||
-          String(c.studentID) === userID)
+          String(c.studentID) === userID),
     )
     .map((c) => ({ ...c, status: "Approved" }));
 
@@ -383,7 +383,7 @@ app.delete("/api/item-claims/:itemID/:email", (req, res) => {
         String(c.itemID) === String(itemID) &&
         c.studentEmail === decodedEmail &&
         c.status === "Approved"
-      )
+      ),
   );
 
   if (data.claims.length === originalLength) {
@@ -409,7 +409,7 @@ app.get("/api/user/turned-in-items", (req, res) => {
       (r) =>
         r.typeOfSubmission === "found-report" &&
         (r.studentEmail.toLowerCase() === userEmail ||
-          String(r.studentID) === userID)
+          String(r.studentID) === userID),
     )
     .map((r) => ({ ...r, status: "Pending" }));
 
@@ -420,7 +420,7 @@ app.get("/api/user/turned-in-items", (req, res) => {
     .filter(
       (item) =>
         item.submitterEmail?.toLowerCase() === userEmail ||
-        String(item.submitterID) === userID
+        String(item.submitterID) === userID,
     )
     .map((item) => ({ ...item, status: "Waiting" }));
 
@@ -430,7 +430,7 @@ app.get("/api/user/turned-in-items", (req, res) => {
     .filter(
       (item) =>
         item.submitterEmail?.toLowerCase() === userEmail ||
-        String(item.submitterID) === userID
+        String(item.submitterID) === userID,
     )
     .map((item) => ({ ...item, status: "Claimed" }));
 
@@ -447,7 +447,7 @@ app.delete("/api/claimed-items/:id", (req, res) => {
   const originalLength = data.claimedItems.length;
 
   data.claimedItems = data.claimedItems.filter(
-    (item) => String(item.id) !== id
+    (item) => String(item.id) !== id,
   );
 
   if (data.claimedItems.length === originalLength) {
@@ -469,7 +469,7 @@ app.get("/api/user/contact-responses", (req, res) => {
 
   const userResponses = answeredData.messages.filter(
     (msg) =>
-      msg.email.toLowerCase() === userEmail || String(msg.studentId) === userID
+      msg.email.toLowerCase() === userEmail || String(msg.studentId) === userID,
   );
 
   res.json({ success: true, responses: userResponses });
@@ -485,7 +485,7 @@ app.delete("/api/contact-responses/:email/:subject", (req, res) => {
   const originalLength = data.messages.length;
 
   data.messages = data.messages.filter(
-    (msg) => !(msg.email === decodedEmail && msg.subject === decodedSubject)
+    (msg) => !(msg.email === decodedEmail && msg.subject === decodedSubject),
   );
 
   if (data.messages.length === originalLength) {
@@ -509,7 +509,7 @@ app.get("/api/user/credits", (req, res) => {
     (u) =>
       String(u.id) === String(req.session.user.id) &&
       u.email === req.session.user.email &&
-      u.userType === "Student"
+      u.userType === "Student",
   );
 
   if (!user) {
@@ -526,17 +526,140 @@ app.get("/api/items/latest", (req, res) => {
   const data = readJSON(FILES.items, { items: [] });
 
   const latestItems = data.items
-    .filter(item => item.image && item.image !== "")
+    .filter((item) => item.image && item.image !== "")
     .sort((a, b) => Number(b.id) - Number(a.id))
     .slice(0, 5)
-    .map(item => ({
+    .map((item) => ({
       image: item.image,
-      name: item.name
+      name: item.name,
     }));
 
   res.json({ success: true, items: latestItems });
 });
 
+// Replace the existing app.post("/api/user/purchase") with this:
+app.post("/api/user/purchase", (req, res) => {
+  const { itemKey, cost, email, id } = req.body;
+
+  try {
+    // 1. Get current user credits from user-information.json
+    const usersData = readJSON(FILES.users, { users: [] });
+
+    const user = usersData.users.find(
+      (u) =>
+        u.email === email &&
+        String(u.id) === String(id) &&
+        u.userType === "Student",
+    );
+
+    if (!user) {
+      return res.json({ success: false, error: "User not found" });
+    }
+
+    const currentCredits = user.credits || 0;
+
+    if (currentCredits < cost) {
+      return res.json({ success: false, error: "Insufficient credits" });
+    }
+
+    // 2. Deduct credits
+    user.credits = currentCredits - cost;
+    writeJSON(FILES.users, usersData);
+
+    // 3. Add to purchased.json
+    const purchasedPath = path.join(DATA_DIR, "purchased.json");
+    let purchasedData;
+
+    if (!fs.existsSync(purchasedPath)) {
+      // Create file if it doesn't exist
+      purchasedData = {
+        candy: [],
+        tickets: [],
+        cards: [],
+      };
+    } else {
+      purchasedData = readJSON(purchasedPath, {
+        candy: [],
+        tickets: [],
+        cards: [],
+      });
+    }
+
+    purchasedData[itemKey].push({
+      email: email,
+      ID: id,
+      purchasedAt: new Date().toISOString(),
+    });
+
+    writeJSON(purchasedPath, purchasedData);
+
+    // Update session
+    if (req.session.user) {
+      req.session.user.credits = user.credits;
+    }
+
+    res.json({ success: true, newCredits: user.credits });
+  } catch (error) {
+    console.error("Purchase error:", error);
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// Add these routes to your existing server.js file
+
+// ===========================
+//! Purchases Routes
+// ===========================
+
+// Get all purchases
+app.get("/api/purchases", (req, res) => {
+  const purchasedPath = path.join(DATA_DIR, "purchased.json");
+  
+  let purchasedData;
+  if (!fs.existsSync(purchasedPath)) {
+    purchasedData = {
+      candy: [],
+      tickets: [],
+      cards: [],
+    };
+  } else {
+    purchasedData = readJSON(purchasedPath, {
+      candy: [],
+      tickets: [],
+      cards: [],
+    });
+  }
+
+  res.json(purchasedData);
+});
+
+// Mark purchase as fulfilled (removes it from the list)
+app.post("/api/purchases/fulfill", (req, res) => {
+  const { itemKey, email, id, purchasedAt } = req.body;
+  
+  if (!itemKey || !email || !id || !purchasedAt) {
+    return res.status(400).json({ success: false, error: "Missing required fields" });
+  }
+
+  const purchasedPath = path.join(DATA_DIR, "purchased.json");
+  const purchasedData = readJSON(purchasedPath, {
+    candy: [],
+    tickets: [],
+    cards: [],
+  });
+
+  if (!purchasedData[itemKey]) {
+    return res.status(400).json({ success: false, error: "Invalid item key" });
+  }
+
+  // Remove the specific purchase from the array
+  purchasedData[itemKey] = purchasedData[itemKey].filter(
+    (p) => !(p.email === email && String(p.ID) === String(id) && p.purchasedAt === purchasedAt)
+  );
+
+  writeJSON(purchasedPath, purchasedData);
+  res.json({ success: true });
+});
 
 // ===========================
 //! Start Server

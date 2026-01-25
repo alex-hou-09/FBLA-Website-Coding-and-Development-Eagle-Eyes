@@ -1,28 +1,3 @@
 {
-  "items": [
-    {
-      "id": "000001",
-      "name": "Glasses",
-      "category": "Personal Items",
-      "color": "black",
-      "description": "regular black blue light glasses",
-      "locationFound": "Cafeteria",
-      "dateFound": "01/05/2026",
-      "image": "../Images/glasses.jpg",
-      "submitterEmail": "t@cincinnatips.org",
-      "submitterID": "1"
-    },
-    {
-      "id": "000002",
-      "name": "Shoes",
-      "category": "Personal Items",
-      "color": "blue",
-      "description": "Blue Nike dunks with white laces and a dark blue swoosh",
-      "locationFound": "Senior-High Gym",
-      "dateFound": "01/12/2026",
-      "image": "../Images/shoes.jpg",
-      "submitterEmail": "t@cincinnatips.org",
-      "submitterID": "1"
-    }
-  ]
+  "items": []
 }

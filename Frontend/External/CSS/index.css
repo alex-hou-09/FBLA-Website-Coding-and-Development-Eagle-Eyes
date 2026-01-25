@@ -199,7 +199,6 @@ body {
     opacity 0.6s ease,
     transform 0.6s ease;
   z-index: 2;
-  /* Performance optimization */
   will-change: opacity, transform;
 }
 
@@ -223,13 +222,11 @@ body {
   line-height: 1.6;
 }
 
-/* OPTIMIZED: Use CSS transforms instead of SVG manipulation */
 .curved-text {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  /* Critical performance optimization */
   will-change: transform;
   transform: translateZ(0);
 }
@@ -237,7 +234,6 @@ body {
 .rotating-text {
   animation: rotate 30s linear infinite;
   transform-origin: center;
-  /* Performance optimization for smoother animation */
   will-change: transform;
   backface-visibility: hidden;
   transform: translateZ(0);
@@ -391,7 +387,6 @@ body {
   position: relative;
   z-index: 10;
 }
-
 .faq button {
   cursor: pointer;
   background-color: transparent;
@@ -408,9 +403,6 @@ body {
   transition: color 0.2s ease;
 }
 
-.faq button:hover {
-  color: var(--light);
-}
 
 .faq .container {
   background: rgb(255, 255, 255);
@@ -591,4 +583,136 @@ body {
 .fade-up {
   transform: translateY(-10px);
   opacity: 0;
+}
+
+.contact-section {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1b263b, #415a77);
+  overflow: hidden;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* Decorative layers */
+.decor-layer {
+  position: absolute;
+  width: 120%;
+  height: 40%;
+  opacity: 0.25;
+  transform: rotate(-8deg);
+}
+
+.decor-a {
+  top: -10%;
+  left: -10%;
+  background: linear-gradient(90deg, transparent, #778da9);
+}
+
+.decor-b {
+  bottom: -15%;
+  right: -10%;
+  background: linear-gradient(90deg, #0d1b2a, transparent);
+}
+
+.contact-container {
+  position: relative;
+  z-index: 2;
+  margin-top: 5%;
+  margin-bottom: 5%;
+}
+
+
+.contact-card {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 18px;
+  padding: 3rem;
+  width: 75vw;
+  max-width: none;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+}
+
+.contact-card h1 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+.contact-subtext {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 2.5rem;
+}
+
+/* Form layout */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4rem;
+}
+
+.contact-form label {
+  font-size: 0.85rem;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-form input,
+.contact-form textarea,
+.contact-form select {
+  margin-top: 0.4rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  transition: 0.2s ease;
+  resize: none;
+
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus,
+.contact-form select:focus {
+  border-color: #415a77;
+  box-shadow: 0 0 0 2px rgba(65, 90, 119, 0.2);
+}
+
+label.full {
+  grid-column: span 2;
+  margin-top: 1.5rem;
+}
+
+.contact-form button {
+  margin-top: 2rem;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: var(--light);
+  color: white;
+  cursor: pointer;
+  align-self: center; /* Add this to center the button */
+  width: fit-content; /* Optional: make button only as wide as its content */
+  padding-left: 3rem; /* Optional: add more horizontal padding */
+  padding-right: 3rem; /* Optional: add more horizontal padding */
+}
+
+#head{
+  font-weight: 700;
+  font-size: 300%;
+  font-size: 2rem;
+  margin-bottom: 3rem;
+  font-family: "Montserrat", sans-serif;
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en-us">
   <head>
     <title>WHHS Lost and Found - Report Item</title>
@@ -44,9 +44,8 @@
 
       <!-- Right navigation -->
       <nav class="nav-right">
-        <a href="contact.html">Contact</a>
-        <a href="login.html">Log In</a>
         <a href="sources.html">Sources</a>
+        <a href="login.html">Log In</a>
       </nav>
     </header>
 
@@ -71,7 +70,7 @@
           <h1 id="homepage-dashboard">Name Here's User Homepage</h1>
 
           <div class="credit-pill">
-            <span id = "creditCount" class="credit-number">X</span>
+            <span id="creditCount" class="credit-number">X</span>
             <span>Credits Available</span>
           </div>
         </section>
@@ -88,7 +87,7 @@
           </div>
         </section>
         <!-- Contact Submission Responses -->
-        <section class = "responses-section">
+        <section class="responses-section">
           <div id="responsesList" class="glass panel responses">
             <h2>Contact Submission Responses</h2>
             <!-- Responses will be dynamically loaded here -->
@@ -96,48 +95,50 @@
         </section>
 
         <!-- Credits Shop -->
-        <section class = "shop">
+        <section class="shop">
           <div class="glass panel">
-            <h2>SOAR Store  -  Spend your earned credits here!</h2>
-            <div class = "shop-list">
-              <div class = "shop-option">
+            <h2>SOAR Store - Spend your earned credits here!</h2>
+            <div class="shop-list">
+              <div class="shop-option">
                 <div class="store-icon">
-                  <img src="../Images/candy-icon.png" alt="Candy Icon">
+                  <img src="../Images/candy-icon.png" alt="Candy Icon" />
                 </div>
-                <div class = "store-icon-text">
-                  Candy
-                </div>
-                <div class = "point-values">
-                  30 Points
-                </div>
+                <div class="store-icon-text">Candy</div>
+                <div class="point-values">30 Points</div>
               </div>
-              <div class = "shop-option">
+              <div class="shop-option">
                 <div class="store-icon">
-                  <img src="../Images/ticket-icon.png" alt="Ticket Icon">
+                  <img src="../Images/ticket-icon.png" alt="Ticket Icon" />
                 </div>
-                <div class = "store-icon-text">
-                  Event Tickets
-                </div>
-                <div class = "point-values">
-                  60 Points
-                </div>
+                <div class="store-icon-text">Event Tickets</div>
+                <div class="point-values">60 Points</div>
               </div>
-              <div class = "shop-option">
+              <div class="shop-option">
                 <div class="store-icon">
-                  <img src="../Images/giftcard-icon.png" alt="Gift Card Icon">
+                  <img src="../Images/giftcard-icon.png" alt="Gift Card Icon" />
                 </div>
-                <div class = "store-icon-text">
-                  $15 Gift Card
-                </div>
-                <div class = "point-values">
-                  100 Points
-                </div>
+                <div class="store-icon-text">$15 Gift Card</div>
+                <div class="point-values">100 Points</div>
               </div>
             </div>
           </div>
         </section>
       </main>
     </section>
+
+    <div id="purchaseModal" class="modal">
+      <div class="modal-content">
+        <h2>Confirm Purchase</h2>
+        <p id="modalMessage">
+          Are you sure you want to purchase <span id="itemName"></span>?
+        </p>
+        <p id="modalCost">Cost: <span id="itemCost"></span> Points</p>
+        <div class="modal-buttons">
+          <button id="confirmBtn" class="btn-confirm">Confirm</button>
+          <button id="cancelBtn" class="btn-cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
 
     <footer>
       <div class="footer-container">

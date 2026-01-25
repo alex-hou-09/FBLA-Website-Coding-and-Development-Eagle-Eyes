@@ -236,3 +236,44 @@
 .center {
   text-align: center;
 }
+
+/* Add this to your admin.css file */
+
+/* Purchase rows */
+.purchase-row {
+  display: block;
+}
+
+.purchase-content {
+  line-height: 1.6;
+}
+
+.purchase-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.fulfilled-btn {
+  background: #2a9d8f;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.fulfilled-btn:hover {
+  background: #21867a;
+}
+
+/* Empty state text */
+#candyPurchasesList p,
+#ticketsPurchasesList p,
+#cardsPurchasesList p {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 20px;
+}

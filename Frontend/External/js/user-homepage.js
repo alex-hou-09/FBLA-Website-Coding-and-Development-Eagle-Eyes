@@ -18,9 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .join("")
         .toUpperCase();
       document.getElementById("avatar").textContent = initials;
-      document.getElementById(
-        "homepage-dashboard"
-      ).textContent = `${user.name}'s User Homepage`;
+      document.getElementById("homepage-dashboard").textContent =
+        `${user.name}'s User Homepage`;
 
       const typeDisplay = document.getElementById("type");
       if (typeDisplay) typeDisplay.textContent = user.userType;
@@ -49,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const userClaims = data.claims.filter(
-          (c) => c.studentEmail === email || String(c.studentID) === String(id)
+          (c) => c.studentEmail === email || String(c.studentID) === String(id),
         );
 
         userClaims.forEach((claim) => {
@@ -79,9 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
               try {
                 const res = await fetch(
                   `/api/item-claims/${claim.itemID}/${encodeURIComponent(
-                    claim.studentEmail
+                    claim.studentEmail,
                   )}`,
-                  { method: "DELETE" }
+                  { method: "DELETE" },
                 );
                 const result = await res.json();
                 if (result.success) {
@@ -208,9 +207,9 @@ function loadContactResponses() {
           try {
             const res = await fetch(
               `/api/contact-responses/${encodeURIComponent(
-                resp.email
+                resp.email,
               )}/${encodeURIComponent(resp.subject)}`,
-              { method: "DELETE" }
+              { method: "DELETE" },
             );
             const result = await res.json();
             if (result.success) row.remove();
@@ -229,13 +228,203 @@ function loadContactResponses() {
 }
 
 fetch("/api/user/credits")
-  .then(res => res.json())
-  .then(data => {
+  .then((res) => res.json())
+  .then((data) => {
     if (data.success) {
       document.getElementById("creditCount").textContent = data.credits;
     }
   });
 
+// Add this to your existing user-homepage.js
+
+let currentUserCredits = 0;
+let currentUserEmail = "";
+let currentUserID = "";
+
+// Update the existing fetch for current user
+fetch("/api/current-user")
+  .then((res) => res.json())
+  .then((user) => {
+    if (!user) {
+      window.location.href = "/Frontend/HTML/login.html";
+      return;
+    }
+
+    currentUserEmail = user.email;
+    currentUserID = user.id;
+
+    document.getElementById("name").textContent = user.name;
+    const initials = user.name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+    document.getElementById("avatar").textContent = initials;
+    document.getElementById("homepage-dashboard").textContent =
+      `${user.name}'s User Homepage`;
+
+    const typeDisplay = document.getElementById("type");
+    if (typeDisplay) typeDisplay.textContent = user.userType;
+
+    loadUserClaims(user.email, user.id);
+  })
+  .catch((err) => console.error("Error fetching current user:", err));
+
+// Update credits fetch
+fetch("/api/user/credits")
+  .then((res) => res.json())
+  .then((data) => {
+    if (data.success) {
+      currentUserCredits = data.credits;
+      document.getElementById("creditCount").textContent = data.credits;
+      updateShopAffordability();
+    }
+  });
+
+// Shop functionality
+const shopItems = [
+  { name: "Candy", cost: 30, key: "candy" },
+  { name: "Event Tickets", cost: 60, key: "tickets" },
+  { name: "$15 Gift Card", cost: 100, key: "cards" },
+];
+
+function updateShopAffordability() {
+  const pointValues = document.querySelectorAll(".point-values");
+  pointValues.forEach((element, index) => {
+    const cost = shopItems[index].cost;
+    element.classList.remove("affordable", "unaffordable");
+    if (currentUserCredits >= cost) {
+      element.classList.add("affordable");
+    } else {
+      element.classList.add("unaffordable");
+    }
+  });
+}
+
+// Add click listeners to shop items
+document.addEventListener("DOMContentLoaded", () => {
+  const shopOptions = document.querySelectorAll(".shop-option");
+  const modal = document.getElementById("purchaseModal");
+  const confirmBtn = document.getElementById("confirmBtn");
+  const cancelBtn = document.getElementById("cancelBtn");
+  let selectedItem = null;
+
+  shopOptions.forEach((option, index) => {
+    option.addEventListener("click", () => {
+      selectedItem = shopItems[index];
+      showPurchaseModal(selectedItem);
+    });
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    modal.style.display = "none";
+    selectedItem = null;
+  });
+
+  confirmBtn.addEventListener("click", () => {
+    if (selectedItem) {
+      processPurchase(selectedItem);
+    }
+  });
+
+  // Close modal when clicking outside
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.style.display = "none";
+      selectedItem = null;
+    }
+  });
+});
+
+function showPurchaseModal(item) {
+  const modal = document.getElementById("purchaseModal");
+  const itemNameSpan = document.getElementById("itemName");
+  const itemCostSpan = document.getElementById("itemCost");
+  const confirmBtn = document.getElementById("confirmBtn");
+
+  itemNameSpan.textContent = item.name;
+  itemCostSpan.textContent = item.cost;
+
+  // Disable confirm button if not affordable
+  if (currentUserCredits < item.cost) {
+    confirmBtn.disabled = true;
+    confirmBtn.style.opacity = "0.5";
+    confirmBtn.style.cursor = "not-allowed";
+  } else {
+    confirmBtn.disabled = false;
+    confirmBtn.style.opacity = "1";
+    confirmBtn.style.cursor = "pointer";
+  }
+
+  modal.style.display = "block";
+}
+
+function processPurchase(item) {
+  if (currentUserCredits < item.cost) {
+    alert("Insufficient credits!");
+    return;
+  }
+
+  // Deduct credits
+  fetch("/api/user/purchase", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      itemKey: item.key,
+      cost: item.cost,
+      email: currentUserEmail,
+      id: currentUserID,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        currentUserCredits = data.newCredits;
+        document.getElementById("creditCount").textContent = currentUserCredits;
+        updateShopAffordability();
+
+        // Show success message
+        const modal = document.getElementById("purchaseModal");
+        const modalContent = modal.querySelector(".modal-content");
+        const confirmBtn = document.getElementById("confirmBtn");
+        const cancelBtn = document.getElementById("cancelBtn");
+
+        // Hide buttons
+        confirmBtn.style.display = "none";
+        cancelBtn.style.display = "none";
+
+        // Add success message
+        const successMsg = document.createElement("p");
+        successMsg.id = "successMessage";
+        successMsg.textContent = "Item purchased! See room 2207 for item.";
+        successMsg.style.color = "#4CAF50";
+        successMsg.style.fontWeight = "bold";
+        successMsg.style.marginTop = "20px";
+        successMsg.style.fontSize = "1.1rem";
+        modalContent.appendChild(successMsg);
+
+        // Close modal after 4 seconds
+        setTimeout(() => {
+          modal.style.display = "none";
+
+          // Reset modal for next use
+          confirmBtn.style.display = "inline-block";
+          cancelBtn.style.display = "inline-block";
+          successMsg.remove();
+        }, 4000);
+      } else {
+        alert("Purchase failed: " + data.error);
+        document.getElementById("purchaseModal").style.display = "none";
+      }
+    })
+    .catch((err) => {
+      console.error("Purchase error:", err);
+      alert("Error processing purchase");
+      document.getElementById("purchaseModal").style.display = "none";
+    });
+}
 
 // Call it on DOMContentLoaded
 loadContactResponses();
