@@ -4,6 +4,37 @@ const path = require("path");
 const session = require("express-session");
 const multer = require("multer");
 
+require("dotenv").config(); // Load the .env file
+
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY); // Access the value
+
+// Use it
+// Improved sendEmail function with error handling
+const sendEmail = async ({ to, subject, text, html }) => {
+  try {
+    const data = await resend.emails.send({
+      from: process.env.FROM_EMAIL,
+      to: [to],
+      subject: subject,
+      text: text,
+      html: html,
+    });
+    console.log(`✓ Email sent to ${to}:`, data);
+    return data;
+  } catch (error) {
+    console.error("✗ Failed to send email:", error);
+    // Don't throw - we don't want email failures to break the app
+  }
+};
+
+const {
+  getClaimApprovedEmail,
+  getClaimDeniedEmail,
+  getContactResponseEmail,
+  getItemClaimedEmail,
+} = require("./emailTemplates");
+
 const app = express();
 const PORT = 3000;
 
@@ -260,7 +291,7 @@ app.post("/api/contact", (req, res) => {
   res.json({ success: true, message: "Your message has been submitted." });
 });
 
-app.post("/api/contact/respond", (req, res) => {
+app.post("/api/contact/respond", async (req, res) => {
   const { message, response, answeredAt } = req.body;
   if (!message || !response) return res.status(400).json({ success: false });
 
@@ -285,13 +316,26 @@ app.post("/api/contact/respond", (req, res) => {
   writeJSON(FILES.contactWaiting, waitingData);
   writeJSON(FILES.contactAnswered, answeredData);
 
+  // Send email to user with the response
+  const userName = removedMessage.email.split('@')[0];
+  const emailContent = getContactResponseEmail(
+    userName,
+    removedMessage.message,
+    response
+  );
+  
+  await sendEmail({
+    to: removedMessage.email,
+    ...emailContent
+  });
+
   res.json({ success: true });
 });
 
 // ===========================
 //! Claim Decision Route (Updated with Image Handling)
 // ===========================
-app.post("/api/claims/decision", (req, res) => {
+app.post("/api/claims/decision", async (req, res) => {
   try {
     const { submission, decision } = req.body;
 
@@ -302,43 +346,32 @@ app.post("/api/claims/decision", (req, res) => {
     ensureFile(FILES.claimedItems, "claimedItems");
 
     const pendingData = readJSON(FILES.pending, { pending: [] });
-    
-    // Find the exact submission to get image path
+
     const submissionIndex = pendingData.pending.findIndex(
       (p) =>
         p.typeOfSubmission === submission.typeOfSubmission &&
         p.studentEmail === submission.studentEmail &&
-        (p.itemID === submission.itemID || p.itemName === submission.itemName)
+        (p.itemID === submission.itemID || p.itemName === submission.itemName),
     );
 
     let imagePath = "";
-    
+
     if (submissionIndex !== -1) {
       const foundSubmission = pendingData.pending[submissionIndex];
-      
-      // Move image from uploads to Images folder if it exists and decision is approve
+
       if (decision === "approve" && foundSubmission.tempImagePath) {
         const finalImageName = foundSubmission.originalImageName;
         const finalImagePath = path.join(IMAGES_DIR, finalImageName);
-        
+
         try {
-          // Copy file from uploads to Images
           fs.copyFileSync(foundSubmission.tempImagePath, finalImagePath);
-          
-          // Store relative path from HTML files (Frontend/HTML/)
           imagePath = `../Images/${finalImageName}`;
-          
-          // Delete temp file
           fs.unlinkSync(foundSubmission.tempImagePath);
-          
           console.log(`✓ Image moved successfully: ${finalImageName}`);
-          console.log(`✓ Saved to: Frontend/Images/${finalImageName}`);
-          console.log(`✓ Path stored in DB: ${imagePath}`);
         } catch (err) {
           console.error("Error moving image:", err);
         }
       } else if (foundSubmission.tempImagePath) {
-        // If denied, just delete the temp file
         try {
           fs.unlinkSync(foundSubmission.tempImagePath);
           console.log(`✓ Temp image deleted (report was denied)`);
@@ -348,7 +381,6 @@ app.post("/api/claims/decision", (req, res) => {
       }
     }
 
-    // Remove from pending
     pendingData.pending = pendingData.pending.filter(
       (p) =>
         !(
@@ -395,6 +427,34 @@ app.post("/api/claims/decision", (req, res) => {
         );
 
         writeJSON(FILES.items, itemsData);
+
+        // Send email to person who claimed the item
+        const userName = submission.studentEmail.split("@")[0];
+        const emailContent = getClaimApprovedEmail(
+          userName,
+          submission.itemName || `Item ID: ${submission.itemID}`,
+          submission.typeOfSubmission,
+        );
+
+        await sendEmail({
+          to: submission.studentEmail,
+          ...emailContent,
+        });
+
+        // Send email to person who turned in the item
+        if (claimedItem.submitterEmail) {
+          const submitterName = claimedItem.submitterEmail.split("@")[0];
+          const claimedEmailContent = getItemClaimedEmail(
+            submitterName,
+            claimedItem.name,
+            submission.studentEmail,
+          );
+
+          await sendEmail({
+            to: claimedItem.submitterEmail,
+            ...claimedEmailContent,
+          });
+        }
       }
 
       if (submission.typeOfSubmission === "lost-report") {
@@ -404,6 +464,19 @@ app.post("/api/claims/decision", (req, res) => {
           image: imagePath,
         });
         writeJSON(FILES.lostItems, lost);
+
+        // Send approval email for lost report
+        const userName = submission.studentEmail.split("@")[0];
+        const emailContent = getClaimApprovedEmail(
+          userName,
+          submission.itemName,
+          submission.typeOfSubmission,
+        );
+
+        await sendEmail({
+          to: submission.studentEmail,
+          ...emailContent,
+        });
       }
 
       if (submission.typeOfSubmission === "found-report") {
@@ -422,11 +495,41 @@ app.post("/api/claims/decision", (req, res) => {
           submitterID: submission.studentID,
         });
         writeJSON(FILES.items, items);
+
+        // Send approval email for found report
+        const userName = submission.studentEmail.split("@")[0];
+        const emailContent = getClaimApprovedEmail(
+          userName,
+          submission.itemName,
+          submission.typeOfSubmission,
+        );
+
+        await sendEmail({
+          to: submission.studentEmail,
+          ...emailContent,
+        });
       }
+    } else if (decision === "deny") {
+      // Send denial email
+      const userName = submission.studentEmail.split("@")[0];
+      const itemName = submission.itemName || `Item ID: ${submission.itemID}`;
+      const emailContent = getClaimDeniedEmail(
+        userName,
+        itemName,
+        "Your submission did not meet our verification requirements.",
+      );
+
+      await sendEmail({
+        to: submission.studentEmail,
+        ...emailContent,
+      });
     }
 
     writeJSON(FILES.pending, pendingData);
-    res.json({ success: true });
+    res.json({
+      success: true,
+      message: `${decision === "approve" ? "Approved" : "Denied"} and email sent`,
+    });
   } catch (err) {
     console.error("CLAIM DECISION ERROR:", err);
     res.status(500).json({ success: false });
@@ -695,7 +798,7 @@ app.post("/api/user/purchase", (req, res) => {
 
 app.get("/api/purchases", (req, res) => {
   const purchasedPath = path.join(DATA_DIR, "purchased.json");
-  
+
   let purchasedData;
   if (!fs.existsSync(purchasedPath)) {
     purchasedData = {
@@ -716,9 +819,11 @@ app.get("/api/purchases", (req, res) => {
 
 app.post("/api/purchases/fulfill", (req, res) => {
   const { itemKey, email, id, purchasedAt } = req.body;
-  
+
   if (!itemKey || !email || !id || !purchasedAt) {
-    return res.status(400).json({ success: false, error: "Missing required fields" });
+    return res
+      .status(400)
+      .json({ success: false, error: "Missing required fields" });
   }
 
   const purchasedPath = path.join(DATA_DIR, "purchased.json");
@@ -733,7 +838,12 @@ app.post("/api/purchases/fulfill", (req, res) => {
   }
 
   purchasedData[itemKey] = purchasedData[itemKey].filter(
-    (p) => !(p.email === email && String(p.ID) === String(id) && p.purchasedAt === purchasedAt)
+    (p) =>
+      !(
+        p.email === email &&
+        String(p.ID) === String(id) &&
+        p.purchasedAt === purchasedAt
+      ),
   );
 
   writeJSON(purchasedPath, purchasedData);

@@ -15,6 +15,13 @@
       "credits": 0
     },
     {
+      "name": "Alan Hou",
+      "email": "alexanderhou88@gmail.com",
+      "id": 111111111,
+      "userType": "Student",
+      "credits": 0
+    },
+    {
       "name": "Test User",
       "email": "t@cincinnatips.org",
       "id": 1,
