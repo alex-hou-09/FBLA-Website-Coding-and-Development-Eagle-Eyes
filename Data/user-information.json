@@ -5,17 +5,10 @@
       "email": "ahou1@cincinnatips.org",
       "id": 123456789,
       "userType": "Student",
-      "credits": 0
+      "credits": 10
     },
     {
-      "name": "Ian Fry",
-      "email": "ifry@cincinnatips.org",
-      "id": 111111111,
-      "userType": "Student",
-      "credits": 0
-    },
-    {
-      "name": "Alan Hou",
+      "name": "Alexander Hou",
       "email": "alexanderhou88@gmail.com",
       "id": 111111111,
       "userType": "Student",
@@ -28,6 +21,8 @@
       "userType": "Student",
       "credits": 0
     },
+
+
     {
       "name": "Beth Comiskey",
       "email": "bcomiskey@hotmail.com",
