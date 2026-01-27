@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
           "Observed:",
           entry.target,
           "Intersecting:",
-          entry.isIntersecting
+          entry.isIntersecting,
         );
         if (entry.isIntersecting) {
           entry.target.classList.add("in-view");
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     {
       threshold: 0.15,
-    }
+    },
   );
 
   const images = document.querySelectorAll(".animate-image");
@@ -49,13 +49,25 @@ document.addEventListener("DOMContentLoaded", () => {
       userLink.textContent = `User Homepage`;
 
       navRight.appendChild(userLink);
+
+      const footerLoginLink = document.getElementById("footer-login-link");
+
+      if (footerLoginLink) {
+        footerLoginLink.href =
+          user.userType === "Admin"
+            ? "/Frontend/HTML/admin.html"
+            : "/Frontend/HTML/user-homepage.html";
+
+        footerLoginLink.textContent = "User Homepage";
+        footerLoginLink.id = "footer-user-home";
+      }
     });
 });
 
 //Log out user
 
 document.getElementById("logoutButton")?.addEventListener("click", () => {
-  fetch("/api/logout", { method: "POST" })
+  fetch("/api/logout", {method: "POST"})
     .then((res) => res.json())
     .then((data) => {
       if (data.success) {
