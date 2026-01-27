@@ -2,15 +2,8 @@
   "users": [
     {
       "name": "Alex Hou",
-      "email": "ahou1@cincinnatips.org",
-      "id": 123456789,
-      "userType": "Student",
-      "credits": 10
-    },
-    {
-      "name": "Alexander Hou",
       "email": "alexanderhou88@gmail.com",
-      "id": 111111111,
+      "id": 123456789,
       "userType": "Student",
       "credits": 0
     },

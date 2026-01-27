@@ -1,3 +1,37 @@
 {
-  "pending": []
+  "pending": [
+    {
+      "typeOfSubmission": "item-claim",
+      "studentEmail": "alexanderhou88@gmail.com",
+      "studentID": "123456789",
+      "itemName": "Claim This! Test",
+      "itemID": "1769378424887",
+      "dateLost": "2009-01-04",
+      "uniqueFeatures": "TEST CLAIM ITEM",
+      "notes": "asdf"
+    },
+    {
+      "typeOfSubmission": "found-report",
+      "studentEmail": "alexanderhou88@gmail.com",
+      "studentID": "123456789",
+      "itemName": "Claim This! Test",
+      "category": "Clothing",
+      "color": "red",
+      "description": "TEST",
+      "locationFound": "Room 1526",
+      "dateFound": "2009-01-04",
+      "tempImagePath": "/Users/sasha/Desktop/FBLA - Lost and Found/uploads/1769385974869-AH FBLA.jpg",
+      "originalImageName": "1769385974869-AH FBLA.jpg"
+    },
+    {
+      "typeOfSubmission": "lost-report",
+      "studentEmail": "alexanderhou88@gmail.com",
+      "studentID": "TEST",
+      "itemName": "TEST LOST REPORT",
+      "category": "Electronics",
+      "color": "green",
+      "description": "TEST",
+      "lastSeen": "2009-01-04"
+    }
+  ]
 }

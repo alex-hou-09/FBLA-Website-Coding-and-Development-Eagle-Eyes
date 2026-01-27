@@ -1,3 +1,11 @@
 {
-  "messages": []
+  "messages": [
+    {
+      "email": "alexanderhou88@gmail.com",
+      "studentId": "123456789",
+      "subject": "TEST CONTACT REPORT EMAIL",
+      "category": "Bug Report",
+      "message": "TEST"
+    }
+  ]
 }

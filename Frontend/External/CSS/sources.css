@@ -1,7 +1,7 @@
 
 
 .sources-hero {
-  background: linear-gradient(135deg, #1b263b, #415a77);
+  background-color: var(--verydark);
   padding: 80px 20px;
   text-align: center;
   color: white;
@@ -10,12 +10,12 @@
 .hero-content h1 {
   font-family: "Montserrat", sans-serif;
   font-size: 3rem;
-  font-weight: 700;
+  font-weight: 500;
   margin-bottom: 15px;
 }
 
 .sources-content {
-  background: linear-gradient(135deg, #e0e1dd, #f8f9fa);
+  background-color: var(--base);
   padding: 60px 20px;
   min-height: 60vh;
 }
@@ -44,8 +44,6 @@
   border-radius: 15px;
   padding: 25px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 

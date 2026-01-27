@@ -22,8 +22,8 @@ function setText(id, value) {
 ============================ */
 function loadCurrentUser() {
   fetch("/api/current-user")
-    .then(res => res.json())
-    .then(user => {
+    .then((res) => res.json())
+    .then((user) => {
       if (!user) return;
 
       const avatar = document.querySelector(".profile .avatar");
@@ -33,7 +33,7 @@ function loadCurrentUser() {
         // Show initials (first letters of first and last name)
         const initials = user.name
           .split(" ")
-          .map(n => n[0])
+          .map((n) => n[0])
           .join("")
           .toUpperCase();
         avatar.textContent = initials;
@@ -41,7 +41,7 @@ function loadCurrentUser() {
 
       if (nameEl) nameEl.textContent = user.name;
     })
-    .catch(err => console.error("Failed to load current user:", err));
+    .catch((err) => console.error("Failed to load current user:", err));
 }
 
 /* ============================
@@ -60,7 +60,7 @@ function loadItems() {
         row.className = "row";
         row.innerHTML = `<span>${item.name} --- Found: ${item.dateFound} </span><button class="delete-btn">Delete</button>`;
         row.querySelector(".delete-btn").addEventListener("click", () => {
-          fetch(`/api/items/${item.id}`, { method: "DELETE" })
+          fetch(`/api/items/${item.id}`, {method: "DELETE"})
             .then(loadItems)
             .catch((err) => console.error("Failed to delete item:", err));
         });
@@ -84,15 +84,15 @@ function loadPendingCounts() {
       const pending = data.pending || [];
       setText(
         "pendingClaims",
-        pending.filter((p) => p.typeOfSubmission === "item-claim").length
+        pending.filter((p) => p.typeOfSubmission === "item-claim").length,
       );
       setText(
         "pendingFound",
-        pending.filter((p) => p.typeOfSubmission === "found-report").length
+        pending.filter((p) => p.typeOfSubmission === "found-report").length,
       );
       setText(
         "pendingLost",
-        pending.filter((p) => p.typeOfSubmission === "lost-report").length
+        pending.filter((p) => p.typeOfSubmission === "lost-report").length,
       );
     })
     .catch((err) => console.error("Error loading pending submissions:", err));
@@ -119,7 +119,7 @@ function renderContactMessages() {
 
   if (!contactMessagesData.length) {
     container.innerHTML = `<p class="waiting">No messages waiting.</p>`;
-    return; 
+    return;
   }
 
   contactMessagesData.forEach((msg, index) => {
@@ -139,7 +139,9 @@ function renderContactMessages() {
     const sendBtn = row.querySelector(".send-btn");
     const textarea = row.querySelector("textarea");
 
-    replyBtn.addEventListener("click", () => replyBox.classList.toggle("hidden"));
+    replyBtn.addEventListener("click", () =>
+      replyBox.classList.toggle("hidden"),
+    );
 
     sendBtn.addEventListener("click", () => {
       const responseText = textarea.value.trim();
@@ -147,7 +149,7 @@ function renderContactMessages() {
 
       fetch("/api/contact/respond", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
           message: msg,
           response: responseText,
@@ -181,9 +183,21 @@ function loadClaims() {
     .then((res) => res.json())
     .then((data) => {
       const pending = Array.isArray(data.pending) ? data.pending : [];
-      renderClaims("itemClaimsList", pending.filter((p) => p.typeOfSubmission === "item-claim"), "item-claim");
-      renderClaims("foundReportsList", pending.filter((p) => p.typeOfSubmission === "found-report"), "found-report");
-      renderClaims("lostReportsList", pending.filter((p) => p.typeOfSubmission === "lost-report"), "lost-report");
+      renderClaims(
+        "itemClaimsList",
+        pending.filter((p) => p.typeOfSubmission === "item-claim"),
+        "item-claim",
+      );
+      renderClaims(
+        "foundReportsList",
+        pending.filter((p) => p.typeOfSubmission === "found-report"),
+        "found-report",
+      );
+      renderClaims(
+        "lostReportsList",
+        pending.filter((p) => p.typeOfSubmission === "lost-report"),
+        "lost-report",
+      );
     })
     .catch((err) => console.error("Failed to load claims:", err));
 }
@@ -196,7 +210,7 @@ function renderClaims(containerId, claims, type) {
     const textMap = {
       "item-claim": "No pending item claims.",
       "found-report": "No pending found reports.",
-      "lost-report": "No pending lost reports."
+      "lost-report": "No pending lost reports.",
     };
     container.innerHTML = `<p>${textMap[type]}</p>`;
     return;
@@ -245,8 +259,10 @@ function renderClaims(containerId, claims, type) {
       </div>
     `;
 
-    row.querySelector(".approve-btn").onclick = () => submitDecision({ ...claim, typeOfSubmission: type }, "approve");
-    row.querySelector(".deny-btn").onclick = () => submitDecision({ ...claim, typeOfSubmission: type }, "deny");
+    row.querySelector(".approve-btn").onclick = () =>
+      submitDecision({...claim, typeOfSubmission: type}, "approve");
+    row.querySelector(".deny-btn").onclick = () =>
+      submitDecision({...claim, typeOfSubmission: type}, "deny");
 
     container.appendChild(row);
   });
@@ -255,8 +271,8 @@ function renderClaims(containerId, claims, type) {
 function submitDecision(submission, decision) {
   fetch("/api/claims/decision", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ submission, decision }),
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({submission, decision}),
   })
     .then((res) => {
       if (!res.ok) throw new Error("Decision failed");
@@ -289,9 +305,9 @@ function renderPurchases(containerId, purchases, type) {
 
   if (!purchases.length) {
     const textMap = {
-      "candy": "No candy purchases yet.",
-      "tickets": "No raffle ticket purchases yet.",
-      "cards": "No gift card purchases yet."
+      candy: "No candy purchases yet.",
+      tickets: "No raffle ticket purchases yet.",
+      cards: "No gift card purchases yet.",
     };
     container.innerHTML = `<p>${textMap[type]}</p>`;
     return;
@@ -300,9 +316,12 @@ function renderPurchases(containerId, purchases, type) {
   purchases.forEach((purchase) => {
     const row = document.createElement("div");
     row.className = "row-new purchase-row";
-    
+
     const purchaseDate = new Date(purchase.purchasedAt);
-    const formattedDate = purchaseDate.toLocaleDateString() + " " + purchaseDate.toLocaleTimeString();
+    const formattedDate =
+      purchaseDate.toLocaleDateString() +
+      " " +
+      purchaseDate.toLocaleTimeString();
 
     row.innerHTML = `
       <div class="purchase-content">
@@ -325,8 +344,8 @@ function renderPurchases(containerId, purchases, type) {
 function fulfillPurchase(itemKey, email, id, purchasedAt) {
   fetch("/api/purchases/fulfill", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ itemKey, email, id, purchasedAt }),
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({itemKey, email, id, purchasedAt}),
   })
     .then((res) => {
       if (!res.ok) throw new Error("Failed to fulfill purchase");

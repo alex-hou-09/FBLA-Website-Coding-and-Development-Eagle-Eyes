@@ -1,3 +1,17 @@
 {
-  "items": []
+  "items": [
+    {
+      "id": "1769378424887",
+      "name": "Claim This! Test",
+      "category": "Other",
+      "color": "red",
+      "description": "Test",
+      "locationFound": "Room 1526",
+      "dateFound": "2009-01-04",
+      "image": "../Images/1769378414124-AH FBLA.jpg",
+      "status": "Pending",
+      "submitterEmail": "alexanderhou88@gmail.com",
+      "submitterID": "123456789"
+    }
+  ]
 }
