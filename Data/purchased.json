@@ -1,5 +1,17 @@
 {
   "candy": [],
-  "tickets": [],
-  "cards": []
+  "tickets": [
+    {
+      "email": "alexanderhou88@gmail.com",
+      "ID": 123456789,
+      "purchasedAt": "2026-01-28T21:58:48.564Z"
+    }
+  ],
+  "cards": [
+    {
+      "email": "alexanderhou88@gmail.com",
+      "ID": 123456789,
+      "purchasedAt": "2026-01-28T21:59:11.513Z"
+    }
+  ]
 }

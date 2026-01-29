@@ -1,11 +1,18 @@
 {
   "messages": [
     {
+      "email": "ifry@cincinnatips.org",
+      "studentId": "111111111",
+      "subject": "Claiming an Item",
+      "category": "Item Claim Issue",
+      "message": "Where do I go to claim an item that I think is mine?"
+    },
+    {
       "email": "alexanderhou88@gmail.com",
       "studentId": "123456789",
-      "subject": "TEST CONTACT REPORT EMAIL",
+      "subject": "Laggy Page",
       "category": "Bug Report",
-      "message": "TEST"
+      "message": "My home page is pretty laggy,  just wanted to let you guys know just in case you didnt know about this issue yet!"
     }
   ]
 }
