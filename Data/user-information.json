@@ -5,16 +5,15 @@
       "email": "alexanderhou88@gmail.com",
       "id": 123456789,
       "userType": "Student",
-      "credits": 50
+      "credits": 20
     },
     {
       "name": "Test User",
       "email": "t@cincinnatips.org",
       "id": 1,
       "userType": "Student",
-      "credits": 0
+      "credits": 10
     },
-
     {
       "name": "Beth Comiskey",
       "email": "bcomiskey@hotmail.com",

@@ -14,6 +14,22 @@
       "claimedByEmail": "ahou1@cincinnatips.org",
       "claimedByID": "123456789",
       "claimedAt": "2026-01-19T01:36:46.639Z"
+    },
+    {
+      "id": "1769633689855",
+      "name": "Mouse",
+      "category": "Electronics",
+      "color": "Red and Blue",
+      "description": "A computer mouse that is red and blue streaked. The design resembles an owl.",
+      "locationFound": "Computer Lab",
+      "dateFound": "2026-01-22",
+      "image": "../Images/1769633686063-mouse.jpg",
+      "status": "Pending",
+      "submitterEmail": "t@cincinnatips.org",
+      "submitterID": "1",
+      "claimedByEmail": "alexanderhou88@gmail.com",
+      "claimedByID": "123456789",
+      "claimedAt": "2026-02-01T03:51:22.228Z"
     }
   ]
 }
