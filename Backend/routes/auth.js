@@ -1,32 +1,37 @@
 const express = require("express");
 const router = express.Router();
-const {FILES, readJSON} = require("../helpers/fileHelpers");
+const User = require("../models/User");
 
 // POST /api/login
-router.post("/login", (req, res) => {
-  const {email, id} = req.body;
-  const data = readJSON(FILES.users, {users: []});
+router.post("/login", async (req, res) => {
+  try {
+    const {email, id} = req.body;
 
-  const user = data.users.find(
-    (u) => u.email === email && String(u.id) === String(id),
-  );
-  if (!user) return res.json({success: false});
+    const user = await User.findOne({
+      email: email,
+      id: Number(id),
+    });
 
-  req.session.user = {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    userType: user.userType,
-    credits: user.userType === "Student" ? user.credits : 0,
-  };
+    if (!user) return res.json({success: false});
 
-  res.json({
-    success: true,
-    redirect:
-      user.userType === "Admin"
-        ? "/Frontend/HTML/admin.html"
-        : "/Frontend/HTML/user-homepage.html",
-  });
+    req.session.user = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      userType: user.userType,
+      credits: user.userType === "Student" ? user.credits : 0,
+    };
+
+    res.json({
+      success: true,
+      redirect:
+        user.userType === "Admin"
+          ? "/Frontend/HTML/admin.html"
+          : "/Frontend/HTML/user-homepage.html",
+    });
+  } catch (err) {
+    res.status(500).json({success: false, error: err.message});
+  }
 });
 
 // GET /api/current-user

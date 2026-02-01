@@ -3,7 +3,6 @@ const path = require("path");
 
 const {connectDB} = require("./config/database");
 const {sessionMiddleware} = require("./config/session");
-const {upload} = require("./config/multer");
 
 // Routes
 const itemRoutes = require("./routes/items");

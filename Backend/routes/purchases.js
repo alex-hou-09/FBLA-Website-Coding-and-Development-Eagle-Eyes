@@ -1,23 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const {FILES, readJSON, writeJSON} = require("../helpers/fileHelpers");
+
+const User = require("../models/User");
+const Purchase = require("../models/Purchase");
 
 // ===========================
 // POST /api/user/purchase
-// Deduct credits and record a purchase
 // ===========================
-router.post("/user/purchase", (req, res) => {
-  const {itemKey, cost, email, id} = req.body;
-
+router.post("/user/purchase", async (req, res) => {
   try {
-    const usersData = readJSON(FILES.users, {users: []});
+    const {itemKey, cost, email, id} = req.body;
 
-    const user = usersData.users.find(
-      (u) =>
-        u.email === email &&
-        String(u.id) === String(id) &&
-        u.userType === "Student",
-    );
+    const user = await User.findOne({
+      email: email,
+      id: Number(id),
+      userType: "Student",
+    });
 
     if (!user) {
       return res.json({success: false, error: "User not found"});
@@ -28,22 +26,17 @@ router.post("/user/purchase", (req, res) => {
       return res.json({success: false, error: "Insufficient credits"});
     }
 
+    // Deduct credits
     user.credits = currentCredits - cost;
-    writeJSON(FILES.users, usersData);
+    await user.save();
 
-    const purchasedData = readJSON(FILES.purchased, {
-      candy: [],
-      tickets: [],
-      cards: [],
-    });
-
-    purchasedData[itemKey].push({
-      email: email,
-      ID: id,
+    // Record purchase
+    await Purchase.create({
+      itemKey,
+      email,
+      ID: Number(id),
       purchasedAt: new Date().toISOString(),
     });
-
-    writeJSON(FILES.purchased, purchasedData);
 
     // Keep session in sync
     if (req.session.user) {
@@ -51,59 +44,67 @@ router.post("/user/purchase", (req, res) => {
     }
 
     res.json({success: true, newCredits: user.credits});
-  } catch (error) {
-    console.error("Purchase error:", error);
-    res.json({success: false, error: error.message});
+  } catch (err) {
+    console.error("Purchase error:", err);
+    res.json({success: false, error: err.message});
   }
 });
 
 // ===========================
 // GET /api/purchases
-// Admin: view all purchases
+// Admin: view all purchases, grouped by itemKey (matches old JSON shape)
 // ===========================
-router.get("/purchases", (req, res) => {
-  const purchasedData = readJSON(FILES.purchased, {
-    candy: [],
-    tickets: [],
-    cards: [],
-  });
-  res.json(purchasedData);
+router.get("/purchases", async (req, res) => {
+  try {
+    const all = await Purchase.find({});
+
+    // Group into the same shape the frontend expects: { candy: [...], tickets: [...], cards: [...] }
+    const grouped = {candy: [], tickets: [], cards: []};
+    for (const p of all) {
+      grouped[p.itemKey].push({
+        email: p.email,
+        ID: p.ID,
+        purchasedAt: p.purchasedAt,
+      });
+    }
+
+    res.json(grouped);
+  } catch (err) {
+    res.status(500).json({success: false, error: err.message});
+  }
 });
 
 // ===========================
 // POST /api/purchases/fulfill
-// Admin: mark a purchase as fulfilled (removes it from the list)
+// Admin: mark a purchase as fulfilled
 // ===========================
-router.post("/purchases/fulfill", (req, res) => {
-  const {itemKey, email, id, purchasedAt} = req.body;
+router.post("/purchases/fulfill", async (req, res) => {
+  try {
+    const {itemKey, email, id, purchasedAt} = req.body;
 
-  if (!itemKey || !email || !id || !purchasedAt) {
-    return res
-      .status(400)
-      .json({success: false, error: "Missing required fields"});
+    if (!itemKey || !email || !id || !purchasedAt) {
+      return res
+        .status(400)
+        .json({success: false, error: "Missing required fields"});
+    }
+
+    const result = await Purchase.deleteOne({
+      itemKey,
+      email,
+      ID: Number(id),
+      purchasedAt,
+    });
+
+    if (result.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({success: false, error: "Purchase not found"});
+    }
+
+    res.json({success: true});
+  } catch (err) {
+    res.status(500).json({success: false, error: err.message});
   }
-
-  const purchasedData = readJSON(FILES.purchased, {
-    candy: [],
-    tickets: [],
-    cards: [],
-  });
-
-  if (!purchasedData[itemKey]) {
-    return res.status(400).json({success: false, error: "Invalid item key"});
-  }
-
-  purchasedData[itemKey] = purchasedData[itemKey].filter(
-    (p) =>
-      !(
-        p.email === email &&
-        String(p.ID) === String(id) &&
-        p.purchasedAt === purchasedAt
-      ),
-  );
-
-  writeJSON(FILES.purchased, purchasedData);
-  res.json({success: true});
 });
 
 module.exports = router;

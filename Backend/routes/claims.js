@@ -1,100 +1,97 @@
 const express = require("express");
 const fs = require("fs");
+const sharp = require("sharp");
 const path = require("path");
 const router = express.Router();
 
 const {upload} = require("../config/multer");
-const {
-  FILES,
-  IMAGES_DIR,
-  readJSON,
-  writeJSON,
-  ensureFile,
-  awardCredits,
-} = require("../helpers/fileHelpers");
+const {IMAGES_DIR} = require("../helpers/fileHelpers");
 const {sendEmail} = require("../helpers/emailHelper");
 const {
   getClaimApprovedEmail,
   getClaimDeniedEmail,
   getItemClaimedEmail,
-} = require("../../emailTemplates"); // adjust path if emailTemplates moves
+} = require("../../emailTemplates");
+
+const Pending = require("../models/Pending");
+const Item = require("../models/Item");
+const ItemClaim = require("../models/ItemClaim");
+const LostItem = require("../models/LostItem");
+const ClaimedItem = require("../models/ClaimedItem");
+const User = require("../models/User");
 
 // ===========================
 // POST /api/claims
-// Submit a found-report or lost-report (with optional image upload)
+// Submit a found-report or lost-report (with optional image)
 // ===========================
-router.post("/", upload.single("image"), (req, res) => {
-  const newClaim = {
-    typeOfSubmission: req.body.typeOfSubmission,
-    studentEmail: req.body.studentEmail,
-    studentID: req.body.studentID,
-    itemName: req.body.itemName,
-    category: req.body.category,
-    color: req.body.color,
-    description: req.body.description,
-  };
+router.post("/", upload.single("image"), async (req, res) => {
+  try {
+    const newClaim = {
+      typeOfSubmission: req.body.typeOfSubmission,
+      studentEmail: req.body.studentEmail,
+      studentID: req.body.studentID,
+      itemName: req.body.itemName,
+      category: req.body.category,
+      color: req.body.color,
+      description: req.body.description,
+    };
 
-  if (req.body.typeOfSubmission === "found-report") {
-    newClaim.locationFound = req.body.locationFound;
-    newClaim.dateFound = req.body.dateFound;
-  } else if (req.body.typeOfSubmission === "lost-report") {
-    newClaim.lastSeen = req.body.lastSeen;
+    if (req.body.typeOfSubmission === "found-report") {
+      newClaim.locationFound = req.body.locationFound;
+      newClaim.dateFound = req.body.dateFound;
+    } else if (req.body.typeOfSubmission === "lost-report") {
+      newClaim.lastSeen = req.body.lastSeen;
+    }
+
+    if (req.file) {
+      newClaim.tempImagePath = req.file.path;
+      newClaim.originalImageName = req.file.filename;
+    }
+
+    await Pending.create(newClaim);
+    res.json({success: true});
+  } catch (err) {
+    res.status(500).json({success: false, error: err.message});
   }
-
-  if (req.file) {
-    newClaim.tempImagePath = req.file.path;
-    newClaim.originalImageName = req.file.filename;
-  }
-
-  const data = readJSON(FILES.pending, {pending: []});
-  data.pending.push(newClaim);
-  writeJSON(FILES.pending, data);
-  res.json({success: true});
 });
 
 // ===========================
-// POST /api/claims/item-claims  (mounted at /api/claims, so path is /item-claims)
-// Actually this was originally /api/item-claims — keep it mounted on the main
-// router in server.js as: app.use("/api/item-claims", ...) OR just define it here
-// and mount claims at /api. See note in server.js.
-// For a clean split we keep the original URL contract by mounting in server.js as:
-//   app.use("/api/item-claims", claimRoutes.itemClaims)
-// But simpler: just define the full sub-path here.
+// POST /api/item-claims
+// Submit an item claim (no image)
 // ===========================
+router.post("/item-claims", async (req, res) => {
+  try {
+    const {
+      studentEmail,
+      studentID,
+      itemName,
+      itemID,
+      dateLost,
+      uniqueFeatures,
+      notes,
+    } = req.body;
 
-// POST /api/item-claims  — we'll mount this router at /api in server.js
-// and use the path /item-claims below.
-router.post("/item-claims", (req, res) => {
-  const {
-    studentEmail,
-    studentID,
-    itemName,
-    itemID,
-    dateLost,
-    uniqueFeatures,
-    notes,
-  } = req.body;
+    if (!studentEmail || !studentID || !itemID || !dateLost) {
+      return res
+        .status(400)
+        .json({success: false, error: "Required fields are missing."});
+    }
 
-  if (!studentEmail || !studentID || !itemID || !dateLost) {
-    return res
-      .status(400)
-      .json({success: false, error: "Required fields are missing."});
+    await Pending.create({
+      typeOfSubmission: "item-claim",
+      studentEmail,
+      studentID,
+      itemName,
+      itemID,
+      dateLost,
+      uniqueFeatures,
+      notes,
+    });
+
+    res.json({success: true, message: "Claim submitted and pending approval."});
+  } catch (err) {
+    res.status(500).json({success: false, error: err.message});
   }
-
-  const data = readJSON(FILES.pending, {pending: []});
-  data.pending.push({
-    typeOfSubmission: "item-claim",
-    studentEmail,
-    studentID,
-    itemName,
-    itemID,
-    dateLost,
-    uniqueFeatures,
-    notes,
-  });
-
-  writeJSON(FILES.pending, data);
-  res.json({success: true, message: "Claim submitted and pending approval."});
 });
 
 // ===========================
@@ -105,90 +102,116 @@ router.post("/decision", async (req, res) => {
   try {
     const {submission, decision} = req.body;
 
-    ensureFile(FILES.pending, "pending");
-    ensureFile(FILES.itemClaims, "claims");
-    ensureFile(FILES.lostItems, "lost");
-    ensureFile(FILES.items, "items");
-    ensureFile(FILES.claimedItems, "claimedItems");
+    // Build a more specific query to find the EXACT pending document
+    const query = {
+      typeOfSubmission: submission.typeOfSubmission,
+      studentEmail: submission.studentEmail,
+      studentID: submission.studentID,
+    };
 
-    const pendingData = readJSON(FILES.pending, {pending: []});
+    // Add type-specific fields for better matching
+    if (submission.typeOfSubmission === "item-claim") {
+      query.itemID = submission.itemID;
+      query.dateLost = submission.dateLost;
+    } else if (submission.typeOfSubmission === "found-report") {
+      query.itemName = submission.itemName;
+      query.category = submission.category;
+      query.dateFound = submission.dateFound;
+      query.locationFound = submission.locationFound;
+    } else if (submission.typeOfSubmission === "lost-report") {
+      query.itemName = submission.itemName;
+      query.category = submission.category;
+      query.lastSeen = submission.lastSeen;
+    }
 
-    const submissionIndex = pendingData.pending.findIndex(
-      (p) =>
-        p.typeOfSubmission === submission.typeOfSubmission &&
-        p.studentEmail === submission.studentEmail &&
-        (p.itemID === submission.itemID || p.itemName === submission.itemName),
-    );
+    // Find the matching pending doc
+    const pendingDoc = await Pending.findOne(query);
+
+    if (!pendingDoc) {
+      return res.status(404).json({
+        success: false,
+        error: "Pending submission not found or already processed",
+      });
+    }
 
     let imagePath = "";
 
-    // --- Image handling (move to Images/ on approve, delete on deny) ---
-    if (submissionIndex !== -1) {
-      const found = pendingData.pending[submissionIndex];
-
-      if (decision === "approve" && found.tempImagePath) {
-        const finalImageName = found.originalImageName;
-        const finalImagePath = path.join(IMAGES_DIR, finalImageName);
-        try {
-          fs.copyFileSync(found.tempImagePath, finalImagePath);
-          imagePath = `../Images/${finalImageName}`;
-          fs.unlinkSync(found.tempImagePath);
-          console.log(`✓ Image moved successfully: ${finalImageName}`);
-        } catch (err) {
-          console.error("Error moving image:", err);
-        }
-      } else if (found.tempImagePath) {
-        try {
-          fs.unlinkSync(found.tempImagePath);
-          console.log(`✓ Temp image deleted (report was denied)`);
-        } catch (err) {
-          console.error("Error deleting temp image:", err);
-        }
+    // --- Image handling ---
+    if (decision === "approve" && pendingDoc.tempImagePath) {
+      const finalImageName = pendingDoc.originalImageName;
+      const finalImagePath = path.join(IMAGES_DIR, finalImageName);
+      try {
+        await sharp(pendingDoc.tempImagePath)
+          .autoOrient()
+          .resize({width: 600})
+          .jpeg({quality: 75})
+          .toFile(finalImagePath);
+        imagePath = `../Images/${finalImageName}`;
+        fs.unlinkSync(pendingDoc.tempImagePath);
+        console.log(`✓ Image moved successfully: ${finalImageName}`);
+      } catch (err) {
+        console.error("Error moving image:", err);
+      }
+    } else if (pendingDoc.tempImagePath) {
+      try {
+        fs.unlinkSync(pendingDoc.tempImagePath);
+        console.log(`✓ Temp image deleted (report was denied)`);
+      } catch (err) {
+        console.error("Error deleting temp image:", err);
       }
     }
 
-    // Remove from pending regardless of decision
-    pendingData.pending = pendingData.pending.filter(
-      (p) =>
-        !(
-          p.typeOfSubmission === submission.typeOfSubmission &&
-          p.studentEmail === submission.studentEmail &&
-          (p.itemID === submission.itemID || p.itemName === submission.itemName)
-        ),
-    );
+    // Remove from pending using the specific _id
+    await Pending.deleteOne({_id: pendingDoc._id});
 
-    // --- APPROVE logic ---
+    // --- APPROVE ---
     if (decision === "approve") {
-      // 1. Item-Claim: move item from active → claimed, award credits to submitter
+      // 1. Item-Claim
       if (submission.typeOfSubmission === "item-claim") {
-        const claims = readJSON(FILES.itemClaims, {claims: []});
-        claims.claims.push({...submission, status: "Approved"});
-        writeJSON(FILES.itemClaims, claims);
+        // Record the approved claim
+        await ItemClaim.create({...submission, status: "Approved"});
 
-        const itemsData = readJSON(FILES.items, {items: []});
-        const claimedData = readJSON(FILES.claimedItems, {claimedItems: []});
-
-        const claimedItem = itemsData.items.find(
-          (item) => String(item.id) === String(submission.itemID),
-        );
+        // Find the active item being claimed
+        const claimedItem = await Item.findOne({id: String(submission.itemID)});
         if (!claimedItem) {
-          throw new Error("Item not found in _item-information.json");
+          throw new Error("Item not found in Items collection");
         }
 
-        claimedData.claimedItems.push({
-          ...claimedItem,
+        // Move it to ClaimedItems
+        await ClaimedItem.create({
+          id: claimedItem.id,
+          name: claimedItem.name,
+          category: claimedItem.category,
+          color: claimedItem.color,
+          description: claimedItem.description,
+          locationFound: claimedItem.locationFound,
+          dateFound: claimedItem.dateFound,
+          image: claimedItem.image,
+          submitterEmail: claimedItem.submitterEmail,
+          submitterID: claimedItem.submitterID,
           claimedByEmail: submission.studentEmail,
           claimedByID: submission.studentID,
           claimedAt: new Date().toISOString(),
         });
-        writeJSON(FILES.claimedItems, claimedData);
 
-        awardCredits(claimedItem.submitterID, 10);
-
-        itemsData.items = itemsData.items.filter(
-          (item) => String(item.id) !== String(submission.itemID),
+        // Award 10 credits to the person who turned it in
+        console.log(
+          `Attempting to award credits to submitterID: ${claimedItem.submitterID}`,
         );
-        writeJSON(FILES.items, itemsData);
+        const creditUpdate = await User.updateOne(
+          {
+            $or: [
+              {id: Number(claimedItem.submitterID)},
+              {id: String(claimedItem.submitterID)},
+            ],
+            userType: "Student",
+          },
+          {$inc: {credits: 10}},
+        );
+        console.log(`Credit update result:`, creditUpdate);
+
+        // Remove from active items
+        await Item.deleteOne({id: String(submission.itemID)});
 
         // Email the claimer
         const userName = submission.studentEmail.split("@")[0];
@@ -215,11 +238,9 @@ router.post("/decision", async (req, res) => {
         }
       }
 
-      // 2. Lost-Report: add to lost-items list
+      // 2. Lost-Report
       if (submission.typeOfSubmission === "lost-report") {
-        const lost = readJSON(FILES.lostItems, {lost: []});
-        lost.lost.push({...submission, image: imagePath});
-        writeJSON(FILES.lostItems, lost);
+        await LostItem.create({...submission, image: imagePath});
 
         const userName = submission.studentEmail.split("@")[0];
         await sendEmail({
@@ -232,10 +253,9 @@ router.post("/decision", async (req, res) => {
         });
       }
 
-      // 3. Found-Report: add to active items
+      // 3. Found-Report
       if (submission.typeOfSubmission === "found-report") {
-        const items = readJSON(FILES.items, {items: []});
-        items.items.push({
+        await Item.create({
           id: Date.now().toString(),
           name: submission.itemName,
           category: submission.category,
@@ -248,7 +268,6 @@ router.post("/decision", async (req, res) => {
           submitterEmail: submission.studentEmail,
           submitterID: submission.studentID,
         });
-        writeJSON(FILES.items, items);
 
         const userName = submission.studentEmail.split("@")[0];
         await sendEmail({
@@ -262,7 +281,7 @@ router.post("/decision", async (req, res) => {
       }
     }
 
-    // --- DENY logic ---
+    // --- DENY ---
     if (decision === "deny") {
       const userName = submission.studentEmail.split("@")[0];
       const itemName = submission.itemName || `Item ID: ${submission.itemID}`;
@@ -276,7 +295,6 @@ router.post("/decision", async (req, res) => {
       });
     }
 
-    writeJSON(FILES.pending, pendingData);
     res.json({
       success: true,
       message: `${decision === "approve" ? "Approved" : "Denied"} and email sent`,
@@ -284,6 +302,26 @@ router.post("/decision", async (req, res) => {
   } catch (err) {
     console.error("CLAIM DECISION ERROR:", err);
     res.status(500).json({success: false});
+  }
+});
+
+// GET /api/lost-items
+router.get("/lost-items", async (req, res) => {
+  try {
+    const items = await LostItem.find({});
+    res.json({lost: items});
+  } catch (err) {
+    res.status(500).json({success: false, error: err.message});
+  }
+});
+
+// GET /api/pending
+router.get("/pending", async (req, res) => {
+  try {
+    const pending = await Pending.find({});
+    res.json({pending});
+  } catch (err) {
+    res.status(500).json({success: false, error: err.message});
   }
 });
 

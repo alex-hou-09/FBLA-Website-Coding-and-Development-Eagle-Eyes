@@ -1,36 +1,42 @@
 const express = require("express");
 const router = express.Router();
-const {FILES, readJSON, writeJSON} = require("../helpers/fileHelpers");
+const Item = require("../models/Item");
 
-// GET all items
-router.get("/", (req, res) => {
-  const data = readJSON(FILES.items, {items: []});
-  res.json(data);
+// GET /api/items — all active found items
+router.get("/", async (req, res) => {
+  try {
+    const items = await Item.find({});
+    res.json({items});
+  } catch (err) {
+    res.status(500).json({success: false, error: err.message});
+  }
 });
 
-// DELETE an item by id
-router.delete("/:id", (req, res) => {
-  const id = String(req.params.id);
-  const data = readJSON(FILES.items, {items: []});
-  const filtered = data.items.filter((item) => String(item.id) !== id);
-  writeJSON(FILES.items, {items: filtered});
-  res.json({success: true});
+// DELETE /api/items/:id
+router.delete("/:id", async (req, res) => {
+  try {
+    await Item.deleteOne({id: req.params.id});
+    res.json({success: true});
+  } catch (err) {
+    res.status(500).json({success: false, error: err.message});
+  }
 });
 
-// GET latest 5 items that have images (used for homepage carousel, etc.)
-router.get("/latest", (req, res) => {
-  const data = readJSON(FILES.items, {items: []});
+// GET /api/items/latest — last 5 items that have images
+router.get("/latest", async (req, res) => {
+  try {
+    const items = await Item.find({image: {$ne: ""}})
+      .sort({id: -1})
+      .limit(5)
+      .select("image name");
 
-  const latestItems = data.items
-    .filter((item) => item.image && item.image !== "")
-    .sort((a, b) => Number(b.id) - Number(a.id))
-    .slice(0, 5)
-    .map((item) => ({
-      image: item.image,
-      name: item.name,
-    }));
-
-  res.json({success: true, items: latestItems});
+    res.json({
+      success: true,
+      items: items.map((item) => ({image: item.image, name: item.name})),
+    });
+  } catch (err) {
+    res.status(500).json({success: false, error: err.message});
+  }
 });
 
 module.exports = router;
