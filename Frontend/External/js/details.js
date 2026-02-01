@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    const res = await fetch("/Data/_item-information.json");
+    const res = await fetch("/api/items");
     if (!res.ok) throw new Error("Failed to fetch items");
 
     const data = await res.json();

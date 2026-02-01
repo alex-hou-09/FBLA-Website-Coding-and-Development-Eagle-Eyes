@@ -123,6 +123,8 @@
 }
 
 /* Category dropdown styling */
+#sortFilter,
+#sortFilter,
 #categoryFilter {
   flex: 1 1 200px; /* grow, shrink, base width */
   max-width: 250px;
@@ -137,7 +139,11 @@
   transition: all 0.2s ease;
 }
 
+#sortFilter:hover,
+#sortFilter:hover,
 #categoryFilter:hover,
+#sortFilter:focus,
+#sortFilter:focus,
 #categoryFilter:focus {
   border-color: var(--light);
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);

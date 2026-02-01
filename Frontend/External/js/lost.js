@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const container = document.querySelector(".grid-container");
 
   try {
-    const res = await fetch("/Data/lost-items.json"); // adjust path if needed
+    const res = await fetch("/api/lost-items");
     if (!res.ok) throw new Error("Failed to load lost items");
 
     const data = await res.json();

@@ -71,14 +71,14 @@ function loadItems() {
 }
 
 function loadItemCount() {
-  fetch("../../../Data/_item-information.json")
+  fetch("/api/items")
     .then((res) => res.json())
     .then((data) => setText("itemCount", data.items.length))
     .catch((err) => console.error("Error loading item count:", err));
 }
 
 function loadPendingCounts() {
-  fetch("../../../Data/pending-base.json")
+  fetch("/api/pending")
     .then((res) => res.json())
     .then((data) => {
       const pending = data.pending || [];
@@ -102,7 +102,7 @@ function loadPendingCounts() {
    CONTACT MESSAGES
 ============================ */
 function loadContactMessages() {
-  fetch("../../../Data/waiting-contact.json")
+  fetch("/api/contact/waiting")
     .then((res) => res.json())
     .then((data) => {
       contactMessagesData = Array.isArray(data.messages) ? data.messages : [];
@@ -179,7 +179,7 @@ function renderContactMessages() {
    CLAIMS
 ============================ */
 function loadClaims() {
-  fetch("../../../Data/pending-base.json")
+  fetch("/api/pending")
     .then((res) => res.json())
     .then((data) => {
       const pending = Array.isArray(data.pending) ? data.pending : [];
@@ -278,7 +278,10 @@ function submitDecision(submission, decision) {
       if (!res.ok) throw new Error("Decision failed");
       return res.json();
     })
-    .then(() => loadClaims())
+    .then(() => {
+      loadClaims();
+      loadPendingCounts();
+    })
     .catch((err) => {
       console.error(err);
       alert("Failed to process decision");
