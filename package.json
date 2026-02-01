@@ -15,6 +15,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "express-session": "^1.18.2",
+    "mongoose": "^9.1.5",
     "multer": "^2.0.2",
     "react-bits": "^1.0.5",
     "resend": "^6.8.0"

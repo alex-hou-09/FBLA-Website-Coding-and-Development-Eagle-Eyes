@@ -1,3 +1,12 @@
+const mongoose = require("mongoose");
+
+mongoose
+  .connect(
+    "mongodb+srv://alexanderhou:01042009AlexH@lost-and-found.boaa8rq.mongodb.net/",
+  )
+  .then(() => console.log("Connected to MongoDB!"))
+  .catch((err) => console.error("DB connection error:", err));
+
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
@@ -6,12 +15,12 @@ const multer = require("multer");
 
 require("dotenv").config(); // Load the .env file
 
-const { Resend } = require("resend");
+const {Resend} = require("resend");
 const resend = new Resend(process.env.RESEND_API_KEY); // Access the value
 
 // Use it
 // Improved sendEmail function with error handling
-const sendEmail = async ({ to, subject, text, html }) => {
+const sendEmail = async ({to, subject, text, html}) => {
   try {
     const data = await resend.emails.send({
       from: process.env.FROM_EMAIL,
@@ -24,7 +33,6 @@ const sendEmail = async ({ to, subject, text, html }) => {
     return data;
   } catch (error) {
     console.error("✗ Failed to send email:", error);
-    // Don't throw - we don't want email failures to break the app
   }
 };
 
@@ -50,7 +58,7 @@ app.use(
     secret: "mySuperSecretKey",
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 24 * 60 * 60 * 1000 }, // 1 day
+    cookie: {maxAge: 24 * 60 * 60 * 1000}, // 1 day
   }),
 );
 
@@ -61,7 +69,7 @@ app.use(
 // Create uploads directory if it doesn't exist
 const UPLOADS_DIR = path.join(__dirname, "uploads");
 if (!fs.existsSync(UPLOADS_DIR)) {
-  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  fs.mkdirSync(UPLOADS_DIR, {recursive: true});
 }
 
 // Configure multer for temporary storage
@@ -78,7 +86,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: {fileSize: 5 * 1024 * 1024}, // 5MB limit
   fileFilter: (req, file, cb) => {
     // Accept only images
     if (file.mimetype.startsWith("image/")) {
@@ -129,12 +137,12 @@ function writeJSON(filePath, data) {
 
 function ensureFile(filePath, key) {
   if (!fs.existsSync(filePath)) {
-    writeJSON(filePath, { [key]: [] });
+    writeJSON(filePath, {[key]: []});
   }
 }
 
 function awardCredits(userID, amount) {
-  const usersData = readJSON(FILES.users, { users: [] });
+  const usersData = readJSON(FILES.users, {users: []});
 
   const user = usersData.users.find(
     (u) => String(u.id) === String(userID) && u.userType === "Student",
@@ -151,16 +159,16 @@ function awardCredits(userID, amount) {
 // ===========================
 
 app.get("/api/items", (req, res) => {
-  const data = readJSON(FILES.items, { items: [] });
+  const data = readJSON(FILES.items, {items: []});
   res.json(data);
 });
 
 app.delete("/api/items/:id", (req, res) => {
   const id = String(req.params.id);
-  const data = readJSON(FILES.items, { items: [] });
+  const data = readJSON(FILES.items, {items: []});
   const filtered = data.items.filter((item) => String(item.id) !== id);
-  writeJSON(FILES.items, { items: filtered });
-  res.json({ success: true });
+  writeJSON(FILES.items, {items: filtered});
+  res.json({success: true});
 });
 
 // ===========================
@@ -168,13 +176,13 @@ app.delete("/api/items/:id", (req, res) => {
 // ===========================
 
 app.post("/api/login", (req, res) => {
-  const { email, id } = req.body;
-  const data = readJSON(FILES.users, { users: [] });
+  const {email, id} = req.body;
+  const data = readJSON(FILES.users, {users: []});
 
   const user = data.users.find(
     (u) => u.email === email && String(u.id) === String(id),
   );
-  if (!user) return res.json({ success: false });
+  if (!user) return res.json({success: false});
 
   req.session.user = {
     id: user.id,
@@ -199,8 +207,8 @@ app.get("/api/current-user", (req, res) => {
 
 app.post("/api/logout", (req, res) => {
   req.session.destroy((err) => {
-    if (err) return res.status(500).json({ success: false });
-    res.json({ success: true });
+    if (err) return res.status(500).json({success: false});
+    res.json({success: true});
   });
 });
 
@@ -233,10 +241,10 @@ app.post("/api/claims", upload.single("image"), (req, res) => {
     newClaim.originalImageName = req.file.filename;
   }
 
-  const data = readJSON(FILES.pending, { pending: [] });
+  const data = readJSON(FILES.pending, {pending: []});
   data.pending.push(newClaim);
   writeJSON(FILES.pending, data);
-  res.json({ success: true });
+  res.json({success: true});
 });
 
 app.post("/api/item-claims", (req, res) => {
@@ -253,10 +261,10 @@ app.post("/api/item-claims", (req, res) => {
   if (!studentEmail || !studentID || !itemID || !dateLost) {
     return res
       .status(400)
-      .json({ success: false, error: "Required fields are missing." });
+      .json({success: false, error: "Required fields are missing."});
   }
 
-  const data = readJSON(FILES.pending, { pending: [] });
+  const data = readJSON(FILES.pending, {pending: []});
   data.pending.push({
     typeOfSubmission: "item-claim",
     studentEmail,
@@ -269,7 +277,7 @@ app.post("/api/item-claims", (req, res) => {
   });
 
   writeJSON(FILES.pending, data);
-  res.json({ success: true, message: "Claim submitted and pending approval." });
+  res.json({success: true, message: "Claim submitted and pending approval."});
 });
 
 // ===========================
@@ -277,26 +285,26 @@ app.post("/api/item-claims", (req, res) => {
 // ===========================
 
 app.post("/api/contact", (req, res) => {
-  const { email, studentId, subject, category, message } = req.body;
+  const {email, studentId, subject, category, message} = req.body;
   if (!email || !studentId || !subject || !category || !message) {
     return res
       .status(400)
-      .json({ success: false, error: "All fields are required." });
+      .json({success: false, error: "All fields are required."});
   }
 
-  const data = readJSON(FILES.contactWaiting, { messages: [] });
-  data.messages.push({ email, studentId, subject, category, message });
+  const data = readJSON(FILES.contactWaiting, {messages: []});
+  data.messages.push({email, studentId, subject, category, message});
   writeJSON(FILES.contactWaiting, data);
 
-  res.json({ success: true, message: "Your message has been submitted." });
+  res.json({success: true, message: "Your message has been submitted."});
 });
 
 app.post("/api/contact/respond", async (req, res) => {
-  const { message, response, answeredAt } = req.body;
-  if (!message || !response) return res.status(400).json({ success: false });
+  const {message, response, answeredAt} = req.body;
+  if (!message || !response) return res.status(400).json({success: false});
 
-  const waitingData = readJSON(FILES.contactWaiting, { messages: [] });
-  const answeredData = readJSON(FILES.contactAnswered, { messages: [] });
+  const waitingData = readJSON(FILES.contactWaiting, {messages: []});
+  const answeredData = readJSON(FILES.contactAnswered, {messages: []});
 
   const index = waitingData.messages.findIndex(
     (m) =>
@@ -307,29 +315,29 @@ app.post("/api/contact/respond", async (req, res) => {
   );
 
   if (index === -1) {
-    return res.status(404).json({ success: false, error: "Message not found" });
+    return res.status(404).json({success: false, error: "Message not found"});
   }
 
   const [removedMessage] = waitingData.messages.splice(index, 1);
-  answeredData.messages.push({ ...removedMessage, response, answeredAt });
+  answeredData.messages.push({...removedMessage, response, answeredAt});
 
   writeJSON(FILES.contactWaiting, waitingData);
   writeJSON(FILES.contactAnswered, answeredData);
 
   // Send email to user with the response
-  const userName = removedMessage.email.split('@')[0];
+  const userName = removedMessage.email.split("@")[0];
   const emailContent = getContactResponseEmail(
     userName,
     removedMessage.message,
-    response
+    response,
   );
-  
+
   await sendEmail({
     to: removedMessage.email,
-    ...emailContent
+    ...emailContent,
   });
 
-  res.json({ success: true });
+  res.json({success: true});
 });
 
 // ===========================
@@ -337,7 +345,7 @@ app.post("/api/contact/respond", async (req, res) => {
 // ===========================
 app.post("/api/claims/decision", async (req, res) => {
   try {
-    const { submission, decision } = req.body;
+    const {submission, decision} = req.body;
 
     ensureFile(FILES.pending, "pending");
     ensureFile(FILES.itemClaims, "claims");
@@ -345,7 +353,7 @@ app.post("/api/claims/decision", async (req, res) => {
     ensureFile(FILES.items, "items");
     ensureFile(FILES.claimedItems, "claimedItems");
 
-    const pendingData = readJSON(FILES.pending, { pending: [] });
+    const pendingData = readJSON(FILES.pending, {pending: []});
 
     const submissionIndex = pendingData.pending.findIndex(
       (p) =>
@@ -392,15 +400,15 @@ app.post("/api/claims/decision", async (req, res) => {
 
     if (decision === "approve") {
       if (submission.typeOfSubmission === "item-claim") {
-        const claims = readJSON(FILES.itemClaims, { claims: [] });
+        const claims = readJSON(FILES.itemClaims, {claims: []});
         claims.claims.push({
           ...submission,
           status: "Approved",
         });
         writeJSON(FILES.itemClaims, claims);
 
-        const itemsData = readJSON(FILES.items, { items: [] });
-        const claimedData = readJSON(FILES.claimedItems, { claimedItems: [] });
+        const itemsData = readJSON(FILES.items, {items: []});
+        const claimedData = readJSON(FILES.claimedItems, {claimedItems: []});
 
         const claimedItem = itemsData.items.find(
           (item) => String(item.id) === String(submission.itemID),
@@ -458,7 +466,7 @@ app.post("/api/claims/decision", async (req, res) => {
       }
 
       if (submission.typeOfSubmission === "lost-report") {
-        const lost = readJSON(FILES.lostItems, { lost: [] });
+        const lost = readJSON(FILES.lostItems, {lost: []});
         lost.lost.push({
           ...submission,
           image: imagePath,
@@ -480,7 +488,7 @@ app.post("/api/claims/decision", async (req, res) => {
       }
 
       if (submission.typeOfSubmission === "found-report") {
-        const items = readJSON(FILES.items, { items: [] });
+        const items = readJSON(FILES.items, {items: []});
         items.items.push({
           id: Date.now().toString(),
           name: submission.itemName,
@@ -532,20 +540,20 @@ app.post("/api/claims/decision", async (req, res) => {
     });
   } catch (err) {
     console.error("CLAIM DECISION ERROR:", err);
-    res.status(500).json({ success: false });
+    res.status(500).json({success: false});
   }
 });
 
 app.get("/api/user/item-claims", (req, res) => {
   if (!req.session.user || !req.session.user.email) {
-    return res.status(401).json({ success: false, error: "Not logged in" });
+    return res.status(401).json({success: false, error: "Not logged in"});
   }
 
   const userEmail = req.session.user.email.toLowerCase();
   const userID = String(req.session.user.id);
 
-  const pendingData = readJSON(FILES.pending, { pending: [] });
-  const approvedData = readJSON(FILES.itemClaims, { claims: [] });
+  const pendingData = readJSON(FILES.pending, {pending: []});
+  const approvedData = readJSON(FILES.itemClaims, {claims: []});
 
   const pendingClaims = pendingData.pending
     .filter(
@@ -554,7 +562,7 @@ app.get("/api/user/item-claims", (req, res) => {
         (c.studentEmail.toLowerCase() === userEmail ||
           String(c.studentID) === userID),
     )
-    .map((c) => ({ ...c, status: "Pending" }));
+    .map((c) => ({...c, status: "Pending"}));
 
   const approvedClaims = approvedData.claims
     .filter(
@@ -563,7 +571,7 @@ app.get("/api/user/item-claims", (req, res) => {
         (c.studentEmail.toLowerCase() === userEmail ||
           String(c.studentID) === userID),
     )
-    .map((c) => ({ ...c, status: "Approved" }));
+    .map((c) => ({...c, status: "Approved"}));
 
   res.json({
     success: true,
@@ -572,10 +580,10 @@ app.get("/api/user/item-claims", (req, res) => {
 });
 
 app.delete("/api/item-claims/:itemID/:email", (req, res) => {
-  const { itemID, email } = req.params;
+  const {itemID, email} = req.params;
   const decodedEmail = decodeURIComponent(email);
 
-  const data = readJSON(FILES.itemClaims, { claims: [] });
+  const data = readJSON(FILES.itemClaims, {claims: []});
   const originalLength = data.claims.length;
 
   data.claims = data.claims.filter(
@@ -588,20 +596,20 @@ app.delete("/api/item-claims/:itemID/:email", (req, res) => {
   );
 
   if (data.claims.length === originalLength) {
-    return res.status(404).json({ success: false, error: "Claim not found." });
+    return res.status(404).json({success: false, error: "Claim not found."});
   }
 
   writeJSON(FILES.itemClaims, data);
-  res.json({ success: true });
+  res.json({success: true});
 });
 
 app.get("/api/user/turned-in-items", (req, res) => {
-  if (!req.session.user) return res.status(401).json({ success: false });
+  if (!req.session.user) return res.status(401).json({success: false});
 
   const userEmail = req.session.user.email.toLowerCase();
   const userID = String(req.session.user.id);
 
-  const pendingData = readJSON(FILES.pending, { pending: [] });
+  const pendingData = readJSON(FILES.pending, {pending: []});
   const pendingReports = pendingData.pending
     .filter(
       (r) =>
@@ -609,25 +617,25 @@ app.get("/api/user/turned-in-items", (req, res) => {
         (r.studentEmail.toLowerCase() === userEmail ||
           String(r.studentID) === userID),
     )
-    .map((r) => ({ ...r, status: "Pending" }));
+    .map((r) => ({...r, status: "Pending"}));
 
-  const itemsData = readJSON(FILES.items, { items: [] });
+  const itemsData = readJSON(FILES.items, {items: []});
   const waitingReports = itemsData.items
     .filter(
       (item) =>
         item.submitterEmail?.toLowerCase() === userEmail ||
         String(item.submitterID) === userID,
     )
-    .map((item) => ({ ...item, status: "Waiting" }));
+    .map((item) => ({...item, status: "Waiting"}));
 
-  const claimedData = readJSON(FILES.claimedItems, { claimedItems: [] });
+  const claimedData = readJSON(FILES.claimedItems, {claimedItems: []});
   const claimedReports = claimedData.claimedItems
     .filter(
       (item) =>
         item.submitterEmail?.toLowerCase() === userEmail ||
         String(item.submitterID) === userID,
     )
-    .map((item) => ({ ...item, status: "Claimed" }));
+    .map((item) => ({...item, status: "Claimed"}));
 
   res.json({
     success: true,
@@ -638,7 +646,7 @@ app.get("/api/user/turned-in-items", (req, res) => {
 app.delete("/api/claimed-items/:id", (req, res) => {
   const id = String(req.params.id);
 
-  const data = readJSON(FILES.claimedItems, { claimedItems: [] });
+  const data = readJSON(FILES.claimedItems, {claimedItems: []});
   const originalLength = data.claimedItems.length;
 
   data.claimedItems = data.claimedItems.filter(
@@ -646,35 +654,35 @@ app.delete("/api/claimed-items/:id", (req, res) => {
   );
 
   if (data.claimedItems.length === originalLength) {
-    return res.status(404).json({ success: false });
+    return res.status(404).json({success: false});
   }
 
   writeJSON(FILES.claimedItems, data);
-  res.json({ success: true });
+  res.json({success: true});
 });
 
 app.get("/api/user/contact-responses", (req, res) => {
-  if (!req.session.user) return res.status(401).json({ success: false });
+  if (!req.session.user) return res.status(401).json({success: false});
 
   const userEmail = req.session.user.email.toLowerCase();
   const userID = String(req.session.user.id);
 
-  const answeredData = readJSON(FILES.contactAnswered, { messages: [] });
+  const answeredData = readJSON(FILES.contactAnswered, {messages: []});
 
   const userResponses = answeredData.messages.filter(
     (msg) =>
       msg.email.toLowerCase() === userEmail || String(msg.studentId) === userID,
   );
 
-  res.json({ success: true, responses: userResponses });
+  res.json({success: true, responses: userResponses});
 });
 
 app.delete("/api/contact-responses/:email/:subject", (req, res) => {
-  const { email, subject } = req.params;
+  const {email, subject} = req.params;
   const decodedEmail = decodeURIComponent(email);
   const decodedSubject = decodeURIComponent(subject);
 
-  const data = readJSON(FILES.contactAnswered, { messages: [] });
+  const data = readJSON(FILES.contactAnswered, {messages: []});
   const originalLength = data.messages.length;
 
   data.messages = data.messages.filter(
@@ -682,21 +690,19 @@ app.delete("/api/contact-responses/:email/:subject", (req, res) => {
   );
 
   if (data.messages.length === originalLength) {
-    return res
-      .status(404)
-      .json({ success: false, error: "Response not found" });
+    return res.status(404).json({success: false, error: "Response not found"});
   }
 
   writeJSON(FILES.contactAnswered, data);
-  res.json({ success: true });
+  res.json({success: true});
 });
 
 app.get("/api/user/credits", (req, res) => {
   if (!req.session.user) {
-    return res.status(401).json({ success: false });
+    return res.status(401).json({success: false});
   }
 
-  const data = readJSON(FILES.users, { users: [] });
+  const data = readJSON(FILES.users, {users: []});
 
   const user = data.users.find(
     (u) =>
@@ -706,7 +712,7 @@ app.get("/api/user/credits", (req, res) => {
   );
 
   if (!user) {
-    return res.json({ success: false });
+    return res.json({success: false});
   }
 
   res.json({
@@ -716,7 +722,7 @@ app.get("/api/user/credits", (req, res) => {
 });
 
 app.get("/api/items/latest", (req, res) => {
-  const data = readJSON(FILES.items, { items: [] });
+  const data = readJSON(FILES.items, {items: []});
 
   const latestItems = data.items
     .filter((item) => item.image && item.image !== "")
@@ -727,14 +733,14 @@ app.get("/api/items/latest", (req, res) => {
       name: item.name,
     }));
 
-  res.json({ success: true, items: latestItems });
+  res.json({success: true, items: latestItems});
 });
 
 app.post("/api/user/purchase", (req, res) => {
-  const { itemKey, cost, email, id } = req.body;
+  const {itemKey, cost, email, id} = req.body;
 
   try {
-    const usersData = readJSON(FILES.users, { users: [] });
+    const usersData = readJSON(FILES.users, {users: []});
 
     const user = usersData.users.find(
       (u) =>
@@ -744,13 +750,13 @@ app.post("/api/user/purchase", (req, res) => {
     );
 
     if (!user) {
-      return res.json({ success: false, error: "User not found" });
+      return res.json({success: false, error: "User not found"});
     }
 
     const currentCredits = user.credits || 0;
 
     if (currentCredits < cost) {
-      return res.json({ success: false, error: "Insufficient credits" });
+      return res.json({success: false, error: "Insufficient credits"});
     }
 
     user.credits = currentCredits - cost;
@@ -785,10 +791,10 @@ app.post("/api/user/purchase", (req, res) => {
       req.session.user.credits = user.credits;
     }
 
-    res.json({ success: true, newCredits: user.credits });
+    res.json({success: true, newCredits: user.credits});
   } catch (error) {
     console.error("Purchase error:", error);
-    res.json({ success: false, error: error.message });
+    res.json({success: false, error: error.message});
   }
 });
 
@@ -818,12 +824,12 @@ app.get("/api/purchases", (req, res) => {
 });
 
 app.post("/api/purchases/fulfill", (req, res) => {
-  const { itemKey, email, id, purchasedAt } = req.body;
+  const {itemKey, email, id, purchasedAt} = req.body;
 
   if (!itemKey || !email || !id || !purchasedAt) {
     return res
       .status(400)
-      .json({ success: false, error: "Missing required fields" });
+      .json({success: false, error: "Missing required fields"});
   }
 
   const purchasedPath = path.join(DATA_DIR, "purchased.json");
@@ -834,7 +840,7 @@ app.post("/api/purchases/fulfill", (req, res) => {
   });
 
   if (!purchasedData[itemKey]) {
-    return res.status(400).json({ success: false, error: "Invalid item key" });
+    return res.status(400).json({success: false, error: "Invalid item key"});
   }
 
   purchasedData[itemKey] = purchasedData[itemKey].filter(
@@ -847,7 +853,7 @@ app.post("/api/purchases/fulfill", (req, res) => {
   );
 
   writeJSON(purchasedPath, purchasedData);
-  res.json({ success: true });
+  res.json({success: true});
 });
 
 // ===========================
