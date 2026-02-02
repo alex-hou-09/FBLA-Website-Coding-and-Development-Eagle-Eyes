@@ -1,24 +1,86 @@
-# FBLA Lost and Found Website Project
+# FBLA Lost and Found - Digital Lost and Found System for Walnut Hills High School
 
-![Status](https://img.shields.io/badge/Status-In_Progress-yellow)
-
-This is my student project created for the **FBLA Website Coding and Development** event. It simulates the Walnut Hills High School Lost and Found system where users can report lost items, claim found items, and manage a simple credits system for engagement. This project serves to digitize and streamline the entire lost and found system, which helps to enhance the lost item process. 
-
-Note: the frontend is built off my previous project displaying the computer science classes at my school. This was in order for me to focus on project-based learning of backend development as it enabled me to spend more time working with APIs and JSON files.
+A comprehensive full-stack lost and found platform specifically designed to digitize and streamline the lost and found process at Walnut Hills High School. This project was developed for the FBLA 2025-26 Website Coding and Development competition.
 
 ---
 
-##  Features
+## Project Overview
 
-- **Item Reporting**: Users can submit lost or found items with descriptions, locations, and dates.  
-- **Claims Management**: Track claims for lost items submitted by users.  
-- **Credits System**: Students earn credits for returning items, redeemable in a virtual rewards shop.  
-- **Responsive Frontend**: User-friendly interface for reporting and viewing items.  
-- **Backend Server**: Node.js/Express handles API requests and stores project data.  
+The FBLA Lost and Found platform addresses the inefficiencies of traditional lost and found systems by providing a centralized digital solution. Students can report lost items, browse found items, submit claims, and earn credits for returning items. The platform features a credits-based rewards system to incentivize community engagement and responsible item returns.
+
+**Note:** The frontend is built off my previous project displaying the computer science classes at my school. This approach enabled me to focus on project-based learning of backend development, spending more time working with APIs, database management, and server-side logic.
 
 ---
 
-##  Folder Structure
+## FBLA Competition Context
+
+This project was created for the FBLA 2025-26 Website Coding and Development event, focusing on:
+
+- A home page with clear layout and navigation menu
+- A submission form for reporting found items with photo upload capability
+- A searchable listing of all found items
+- A claim/inquiry form for students to request information about or claim items
+- A backend system and admin view to review, approve, and manage item postings
+
+**Competition Resources:**
+- [Full Rubric](link-to-rubric)
+- [Project Script](link-to-script)
+
+---
+
+## Features
+
+### Core Features
+
+- **Item Reporting:** Users can submit lost or found items with descriptions, locations, dates, and photo uploads
+- **Advanced Search & Filtering:** Powerful search system to help students find their lost items quickly
+- **Claims Management:** Track claims for items with status workflow (pending/approved/denied)
+- **Credits System:** Students earn credits for returning found items, redeemable in a virtual rewards shop
+- **Admin Panel:** Comprehensive backend system for reviewing, approving, and managing all item postings
+- **Email Notifications:** Automated email alerts using Resend for claim updates and status changes
+- **Image Optimization:** Automatic image compression using Sharp for efficient storage and loading
+
+### Advanced Features
+
+- **User Authentication:** Secure registration and login system with session management
+- **Contact System:** Built-in messaging for communication between finders and claimants
+- **Pending Items Queue:** Admin workflow for reviewing submissions before they go live
+- **Purchase System:** Virtual store where students can redeem earned credits for rewards
+- **Responsive Design:** Mobile-first approach ensuring accessibility across all devices
+- **File Management:** Secure file upload system using Multer middleware
+
+---
+
+## Tech Stack
+
+### Frontend
+
+- **HTML5/CSS3** for structure and styling
+- **JavaScript (ES6+)** for interactivity and dynamic content
+- **Responsive Design** for mobile and desktop compatibility
+
+### Backend
+
+- **Node.js** runtime environment
+- **Express.js** web application framework
+- **MongoDB** NoSQL database for flexible data storage
+- **Multer** middleware for handling multipart/form-data and file uploads
+- **Resend** email service for automated notifications
+- **Sharp** image processing library for compression and optimization
+- **Express-session** for session management
+
+---
+
+## Prerequisites
+
+- Node.js (v14 or higher)
+- MongoDB (local installation or MongoDB Atlas account)
+- npm (comes with Node.js)
+- Git (for version control)
+
+---
+
+## Folder Structure
 
 ```
 FBLA - Lost and Found/
@@ -61,56 +123,110 @@ FBLA - Lost and Found/
 ├── package-lock.json
 ├── package.json
 └── README.md
-
 ```
 
 ---
 
-##  Getting Started
-
-### Prerequisites
-
-- Node.js (v14+ recommended)  
-- npm (comes with Node.js)  
-- Git (for version control)  
+## Getting Started
 
 ### Installation
 
-1. Clone the repository:  
+1. Clone the repository:
 ```bash
 git clone https://github.com/alex-hou-09/FBLA-Website-Coding-and-Development-2026.git
 ```
 
-2. Navigate into the project folder:  
+2. Navigate into the project folder:
 ```bash
 cd FBLA-Website-Coding-and-Development-2026
 ```
 
-3. Install dependencies:  
+3. Install dependencies:
 ```bash
 npm install
 ```
 
-4. Start the server:  
+4. Start the server:
 ```bash
 node server.js
 ```
 
-5. Open a browser and go to:  
+5. Open a browser and go to:
 ```
 http://localhost:3000
 ```
 
 ---
 
-##  Credits System
+## Usage Guide
 
-- Students earn credits for returning found items.  
-- Credits can be redeemed for virtual rewards like candy, tickets, or other incentives (demonstration purposes for FBLA event).  
+### For Students
+
+1. **Report a Lost Item:**
+   - Navigate to the "Report Lost" page
+   - Fill out the item description form
+   - Add relevant details (location, date, description)
+   - Submit for admin review
+
+2. **Report a Found Item:**
+   - Navigate to the "Report Found" page
+   - Upload photos of the item using the file upload form
+   - Provide details about where and when it was found
+   - Submit for admin approval
+
+3. **Search for Items:**
+   - Use the search page to browse all approved items
+   - Filter by category, location, or date
+   - View detailed item information and photos
+
+4. **Submit a Claim:**
+   - Find your lost item in the listing
+   - Click "Claim This Item"
+   - Provide verification details
+   - Wait for admin approval
+
+5. **Earn & Redeem Credits:**
+   - Earn credits by returning items
+   - Visit the rewards shop
+   - Browse available rewards
+   - Redeem credits for desired items
+
+### For Administrators
+
+1. **Review Pending Items:**
+   - Access the admin panel
+   - View all pending item submissions
+   - Review photos and descriptions
+   - Approve or deny based on guidelines
+
+2. **Manage Claims:**
+   - Review incoming claim requests
+   - Verify claimant information
+   - Approve legitimate claims
+   - Notify both parties via email
+
+3. **Monitor System:**
+   - Track active items and claims
+   - Manage user accounts
+   - Respond to contact requests
+   - Oversee credits distribution
 
 ---
 
+**Developed for FBLA 2025-26 Website Coding and Development Competition**
 
-##  License
+This platform represents a modern solution to traditional lost and found management, combining web technologies, email automation, and gamification to create a community-driven system that benefits the entire student body.
 
-This project is created for educational purposes and FBLA competition submission.
+---
+
+## About
+
+Digital lost and found system developed for FBLA Website Coding and Development 2025-26. Built with Node.js, Express.js, MongoDB, and modern web technologies.
+
+### Topics
+`nodejs` `express` `mongodb` `fbla` `lost-and-found` `resend` `multer` `sharp`
+
+### Languages
+- JavaScript: 65.0%
+- HTML: 25.0%
+- CSS: 10.0%
