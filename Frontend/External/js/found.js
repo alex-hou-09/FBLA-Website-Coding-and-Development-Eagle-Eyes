@@ -4,19 +4,23 @@ const successMessage = document.getElementById("successMessage");
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  // Create FormData to handle file upload
   const formData = new FormData();
   formData.append("typeOfSubmission", "found-report");
-  formData.append("studentEmail", document.getElementById("studentEmail").value);
+  formData.append(
+    "studentEmail",
+    document.getElementById("studentEmail").value,
+  );
   formData.append("studentID", document.getElementById("studentID").value);
   formData.append("itemName", document.getElementById("itemName").value);
   formData.append("category", document.getElementById("category").value);
   formData.append("color", document.getElementById("color").value);
-  formData.append("locationFound", document.getElementById("locationFound").value);
+  formData.append(
+    "locationFound",
+    document.getElementById("locationFound").value,
+  );
   formData.append("dateFound", document.getElementById("dateFound").value);
   formData.append("description", document.getElementById("description").value);
 
-  // Add image file if present
   const imageFile = document.getElementById("UPLOADIMAGE").files[0];
   if (imageFile) {
     formData.append("image", imageFile);
@@ -25,17 +29,17 @@ form.addEventListener("submit", async (e) => {
   try {
     const response = await fetch("http://localhost:3000/api/claims", {
       method: "POST",
-      body: formData, // Send FormData instead of JSON
+      body: formData,
     });
 
     const resp = await response.json();
-    
+
     if (resp.success) {
       successMessage.style.display = "block";
       setTimeout(() => {
         form.reset();
         successMessage.style.display = "none";
-      }, 3000);
+      }, 2250);
     } else {
       alert("Failed to submit. Try again.");
     }

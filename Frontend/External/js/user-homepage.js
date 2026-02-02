@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const typeDisplay = document.getElementById("type");
       if (typeDisplay) typeDisplay.textContent = user.userType;
 
-      // Load claims
       loadUserClaims(user.email, user.id);
     })
     .catch((err) => console.error("Error fetching current user:", err));
@@ -58,11 +57,10 @@ document.addEventListener("DOMContentLoaded", () => {
           }`;
 
           row.innerHTML = `
-    <span>${claim.itemName}</span>
-    <span>${claim.status === "Approved" ? "Claimed" : claim.status}</span>
-  `;
+            <span>${claim.itemName}</span>
+            <span>${claim.status === "Approved" ? "Claimed" : claim.status}</span>
+          `;
 
-          // Add "×" button for approved claims
           if (claim.status === "Approved") {
             const closeBtn = document.createElement("button");
             closeBtn.textContent = "×";
@@ -80,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   `/api/item-claims/${claim.itemID}/${encodeURIComponent(
                     claim.studentEmail,
                   )}`,
-                  { method: "DELETE" },
+                  {method: "DELETE"},
                 );
                 const result = await res.json();
                 if (result.success) {
@@ -129,7 +127,6 @@ function loadTurnedInItems() {
           <span>${report.status}</span>
         `;
 
-        // Add "×" only for Claimed reports
         if (report.status === "Claimed") {
           const closeBtn = document.createElement("button");
           closeBtn.textContent = "×";
@@ -192,7 +189,6 @@ function loadContactResponses() {
           </span>
         `;
 
-        // Add delete button
         const closeBtn = document.createElement("button");
         closeBtn.textContent = "×";
         closeBtn.className = "close-btn";
@@ -209,7 +205,7 @@ function loadContactResponses() {
               `/api/contact-responses/${encodeURIComponent(
                 resp.email,
               )}/${encodeURIComponent(resp.subject)}`,
-              { method: "DELETE" },
+              {method: "DELETE"},
             );
             const result = await res.json();
             if (result.success) row.remove();
@@ -235,13 +231,10 @@ fetch("/api/user/credits")
     }
   });
 
-// Add this to your existing user-homepage.js
-
 let currentUserCredits = 0;
 let currentUserEmail = "";
 let currentUserID = "";
 
-// Update the existing fetch for current user
 fetch("/api/current-user")
   .then((res) => res.json())
   .then((user) => {
@@ -270,7 +263,6 @@ fetch("/api/current-user")
   })
   .catch((err) => console.error("Error fetching current user:", err));
 
-// Update credits fetch
 fetch("/api/user/credits")
   .then((res) => res.json())
   .then((data) => {
@@ -281,11 +273,10 @@ fetch("/api/user/credits")
     }
   });
 
-// Shop functionality
 const shopItems = [
-  { name: "Candy", cost: 30, key: "candy" },
-  { name: "Event Tickets", cost: 60, key: "tickets" },
-  { name: "$15 Gift Card", cost: 100, key: "cards" },
+  {name: "Candy", cost: 30, key: "candy"},
+  {name: "Event Tickets", cost: 60, key: "tickets"},
+  {name: "$15 Gift Card", cost: 100, key: "cards"},
 ];
 
 function updateShopAffordability() {
@@ -301,7 +292,6 @@ function updateShopAffordability() {
   });
 }
 
-// Add click listeners to shop items
 document.addEventListener("DOMContentLoaded", () => {
   const shopOptions = document.querySelectorAll(".shop-option");
   const modal = document.getElementById("purchaseModal");
@@ -327,7 +317,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Close modal when clicking outside
   window.addEventListener("click", (e) => {
     if (e.target === modal) {
       modal.style.display = "none";
@@ -345,7 +334,6 @@ function showPurchaseModal(item) {
   itemNameSpan.textContent = item.name;
   itemCostSpan.textContent = item.cost;
 
-  // Disable confirm button if not affordable
   if (currentUserCredits < item.cost) {
     confirmBtn.disabled = true;
     confirmBtn.style.opacity = "0.5";
@@ -365,7 +353,6 @@ function processPurchase(item) {
     return;
   }
 
-  // Deduct credits
   fetch("/api/user/purchase", {
     method: "POST",
     headers: {
@@ -385,17 +372,14 @@ function processPurchase(item) {
         document.getElementById("creditCount").textContent = currentUserCredits;
         updateShopAffordability();
 
-        // Show success message
         const modal = document.getElementById("purchaseModal");
         const modalContent = modal.querySelector(".modal-content");
         const confirmBtn = document.getElementById("confirmBtn");
         const cancelBtn = document.getElementById("cancelBtn");
 
-        // Hide buttons
         confirmBtn.style.display = "none";
         cancelBtn.style.display = "none";
 
-        // Add success message
         const successMsg = document.createElement("p");
         successMsg.id = "successMessage";
         successMsg.textContent = "Item purchased! See room 2207 for item.";
@@ -405,11 +389,8 @@ function processPurchase(item) {
         successMsg.style.fontSize = "1.1rem";
         modalContent.appendChild(successMsg);
 
-        // Close modal after 4 seconds
         setTimeout(() => {
           modal.style.display = "none";
-
-          // Reset modal for next use
           confirmBtn.style.display = "inline-block";
           cancelBtn.style.display = "inline-block";
           successMsg.remove();
@@ -426,5 +407,4 @@ function processPurchase(item) {
     });
 }
 
-// Call it on DOMContentLoaded
 loadContactResponses();

@@ -1,11 +1,16 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const itemId = localStorage.getItem("selectedItemId");
 
+  console.log("Selected item ID from localStorage:", itemId); // DEBUG
+
   const imageElement = document.getElementById("displayed-image");
   const infoContainer = document.querySelector(".info-container");
 
   if (!itemId || !infoContainer) {
-    infoContainer.innerHTML = "<p>No item selected.</p>";
+    console.error("Missing itemId or infoContainer");
+    if (infoContainer) {
+      infoContainer.innerHTML = "<p>No item selected.</p>";
+    }
     return;
   }
 
@@ -14,10 +19,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!res.ok) throw new Error("Failed to fetch items");
 
     const data = await res.json();
-    const item = data.items.find((i) => i.id === itemId);
+    console.log("All items fetched:", data.items); // DEBUG
+
+    const item = data.items.find((i) => {
+      console.log(`Comparing: "${i.id}" === "${itemId}" ?`, i.id === itemId); // DEBUG
+      return String(i.id) === String(itemId);
+    });
+
+    console.log("Found item:", item); // DEBUG
 
     if (!item) {
-      infoContainer.innerHTML = "<p>Item not found.</p>";
+      console.error("Item not found with ID:", itemId);
+      infoContainer.innerHTML = `<p>Item not found (ID: ${itemId}).</p>`;
       return;
     }
 

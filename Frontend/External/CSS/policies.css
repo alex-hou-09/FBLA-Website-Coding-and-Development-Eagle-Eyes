@@ -1,0 +1,279 @@
+.policies-hero {
+  background-color: var(--verydark);
+  padding: 80px 20px;
+  text-align: center;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+}
+
+.hero-content h1 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 3rem;
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+/* Main Content Layout */
+.policies-content {
+  background-color: var(--light);
+  padding: 3% 5%;
+  font-family: "Montserrat", sans-serif;
+  min-height: 70vh;
+}
+
+.policies-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 3rem;
+}
+
+/* Sidebar Navigation */
+.policies-nav {
+  position: sticky;
+  top: 25%;
+  height: fit-content;
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.policies-nav h3 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  color: var(--verydark);
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+}
+
+.policies-nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.policies-nav li {
+  margin-bottom: 0.8rem;
+}
+
+.policies-nav a {
+  color: var(--dark);
+  text-decoration: none;
+  font-weight: 400;
+  transition: color 0.3s ease;
+  display: block;
+  padding: 0.5rem 0;
+  padding-left: 1rem;
+}
+
+.policies-nav a:hover,
+.policies-nav a.active {
+  color: var(--verydark);
+}
+
+/* Main Content */
+.policies-main {
+  background: white;
+  padding: 3rem;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.policy-section {
+  margin-bottom: 4rem;
+  scroll-margin-top: 100px;
+}
+
+.policy-section:last-of-type {
+  margin-bottom: 2rem;
+}
+
+.policy-section h2 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  color: var(--verydark);
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 3px solid var(--light);
+}
+
+.policy-content h3 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  color: var(--dark);
+  font-size: 1.4rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.policy-content h4 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  color: var(--verydark);
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+.policy-content p {
+  line-height: 1.8;
+  color: #333;
+  margin-bottom: 1.2rem;
+  font-size: 1rem;
+}
+
+.policy-content ul {
+  margin-left: 2rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+}
+
+.policy-content li {
+  margin-bottom: 0.6rem;
+  color: #333;
+}
+
+.policy-content strong {
+  color: var(--verydark);
+  font-weight: 600;
+}
+
+/* Prohibited Items Grid */
+.prohibited-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.prohibited-category {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--verydark);
+}
+
+.prohibited-category h4 {
+  color: var(--verydark);
+  margin-bottom: 1rem;
+  margin-top: 0;
+}
+
+.prohibited-category ul {
+  margin-left: 1.5rem;
+}
+
+/* Policy Notes */
+.policy-note {
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 5px;
+}
+
+/* Contact Info */
+.contact-info {
+  background-color: var(--verydark);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  line-height: 1.8;
+  color: white;
+}
+
+.contact-info a {
+  color: var(--verydark);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.contact-info a:hover {
+  text-decoration: underline;
+}
+
+/* Back to Top Button */
+.back-to-top {
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--light);
+}
+
+.back-to-top-btn {
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  background-color: var(--verydark);
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .policies-container {
+    grid-template-columns: 1fr;
+  }
+
+  .policies-nav {
+    position: static;
+    margin-bottom: 2rem;
+  }
+
+  .policies-nav ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+
+  .policies-content {
+    padding: 5% 3%;
+  }
+
+  .policies-main {
+    padding: 2rem 1.5rem;
+  }
+
+  .policy-section h2 {
+    font-size: 1.6rem;
+  }
+
+  .policy-content h3 {
+    font-size: 1.2rem;
+  }
+
+  .prohibited-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .policies-nav ul {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}

@@ -1,5 +1,9 @@
+/* email structure */
+
 const getClaimApprovedEmail = (userName, itemName, submissionType) => {
   let subject, text, html;
+
+  /* CLAIMED ITEMS */
 
   if (submissionType === "item-claim") {
     subject = "Your Item Claim Has Been Approved";
@@ -16,6 +20,8 @@ const getClaimApprovedEmail = (userName, itemName, submissionType) => {
         </p>
       </div>
     `;
+
+    /* FOUND REPORTS */
   } else if (submissionType === "found-report") {
     subject = "Your Found Report Has Been Approved";
     text = `Hi ${userName},\n\nYour found report for "${itemName}" has been approved and added to our database.\n\nThank you for your honesty!\n\nBest regards,\nLost & Found Team`;
@@ -31,6 +37,8 @@ const getClaimApprovedEmail = (userName, itemName, submissionType) => {
         </p>
       </div>
     `;
+
+    /* LOST REPORTS */
   } else if (submissionType === "lost-report") {
     subject = "Your Lost Report Has Been Approved";
     text = `Hi ${userName},\n\nYour lost report for "${itemName}" has been approved.\n\nWe'll notify you if a matching item is found.\n\nBest regards,\nLost & Found Team`;
@@ -48,8 +56,10 @@ const getClaimApprovedEmail = (userName, itemName, submissionType) => {
     `;
   }
 
-  return { subject, text, html };
+  return {subject, text, html};
 };
+
+/* DENIAL */
 
 const getClaimDeniedEmail = (userName, itemName, reason) => ({
   subject: "Update on Your Submission",
@@ -67,6 +77,8 @@ const getClaimDeniedEmail = (userName, itemName, reason) => ({
     </div>
   `,
 });
+
+/* CONTACT RESPONSE */
 
 const getContactResponseEmail = (userName, originalMessage, response) => ({
   subject: "Response to Your Message",
@@ -88,6 +100,8 @@ const getContactResponseEmail = (userName, originalMessage, response) => ({
     </div>
   `,
 });
+
+/* ITEM HAS BEEN CLAIMED */
 
 const getItemClaimedEmail = (userName, itemName, claimantEmail) => ({
   subject: "Your Item Has Been Claimed",

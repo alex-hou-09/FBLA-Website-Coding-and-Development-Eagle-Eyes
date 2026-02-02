@@ -1,7 +1,7 @@
 .report-section {
   padding: 5%;
   font-family: "Quicksand", sans-serif;
-  overflow:hidden;
+  overflow: hidden;
 }
 
 .report-layout {
@@ -69,7 +69,7 @@ button {
 #successMessage {
   display: none;
   color: green;
-  text-align: left;
+  text-align: center;
 }
 
 .decorative-circles {
@@ -82,7 +82,6 @@ button {
   position: absolute;
 }
 
-
 .circle-2 {
   background-color: var(--dark);
   width: clamp(140px, 82vw, 99000px);
@@ -91,7 +90,6 @@ button {
   right: -38%;
   bottom: -90%;
 }
-
 
 .circle-4 {
   background-color: var(--base);

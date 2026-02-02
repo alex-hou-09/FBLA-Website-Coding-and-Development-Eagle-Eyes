@@ -8,16 +8,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     const data = await res.json();
     const items = data.lost;
 
-    container.innerHTML = ""; // clear placeholder cards
+    container.innerHTML = "";
 
-    items.forEach(item => {
+    items.forEach((item) => {
       const card = document.createElement("div");
       card.className = "item-card";
 
       // Check if image exists, otherwise show placeholder
-      const imageHTML = item.image && item.image.trim() !== ""
-        ? `<img class="browse-image" src="${item.image}" alt="${item.itemName}" />`
-        : `<div class="no-image">No Image</div>`;
+      const imageHTML =
+        item.image && item.image.trim() !== ""
+          ? `<img class="browse-image" src="${item.image}" alt="${item.itemName}" />`
+          : `<div class="no-image">No Image</div>`;
 
       card.innerHTML = `
         ${imageHTML}

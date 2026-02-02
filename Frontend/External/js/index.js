@@ -13,7 +13,8 @@ accordionBtns.forEach((btn) => {
       plusIcon.style.display = "block";
       minusIcon.style.display = "none";
     } else {
-      accordionDescription.style.maxHeight = accordionDescription.scrollHeight + "px";
+      accordionDescription.style.maxHeight =
+        accordionDescription.scrollHeight + "px";
       plusIcon.style.display = "none";
       minusIcon.style.display = "block";
     }
@@ -22,16 +23,15 @@ accordionBtns.forEach((btn) => {
 
 // Carousel functionality
 document.addEventListener("DOMContentLoaded", () => {
-  // OPTIMIZED: Pause/resume rotating text more efficiently
-  const text = document.querySelector('.rotating-text');
-  
+  const text = document.querySelector(".rotating-text");
+
   if (text) {
-    text.addEventListener('mouseenter', () => {
-      text.style.animationPlayState = 'paused';
+    text.addEventListener("mouseenter", () => {
+      text.style.animationPlayState = "paused";
     });
 
-    text.addEventListener('mouseleave', () => {
-      text.style.animationPlayState = 'running';
+    text.addEventListener("mouseleave", () => {
+      text.style.animationPlayState = "running";
     });
   }
 
@@ -52,19 +52,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
       carouselImages = data.items;
 
-      // OPTIMIZED: Use DocumentFragment to batch DOM operations
+      console.log("Carousel items received:", carouselImages);
+
       const fragment = document.createDocumentFragment();
-      
-      carouselImages.forEach((item) => {
+
+      carouselImages.forEach((item, index) => {
+        console.log("Item ID:", item.id, "Item name:", item.name); // DEBUG
+
         const img = document.createElement("img");
         img.src = item.image;
         img.alt = item.name;
         img.className = "carousel-img";
-        // OPTIMIZED: Preload images for smoother transitions
         img.loading = "eager";
+        img.style.cursor = "pointer";
+        img.addEventListener("click", () => {
+          const clickedItem = carouselImages[currentIndex]; // Get the currently visible item
+          console.log("Clicked item with ID:", clickedItem.id); // DEBUG
+          localStorage.setItem("selectedItemId", String(clickedItem.id));
+          localStorage.setItem("selectedItemName", clickedItem.name);
+          window.location.href = "details.html";
+        });
         fragment.appendChild(img);
       });
-      
+
       track.appendChild(fragment);
       showImage(currentIndex);
       startAutoRotate();
@@ -74,7 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function showImage(index) {
     const images = track.querySelectorAll(".carousel-img");
     images.forEach((img, i) => {
-      // OPTIMIZED: Only change opacity for images that need it
       if (i === index && img.style.opacity !== "1") {
         img.style.opacity = "1";
       } else if (i !== index && img.style.opacity !== "0") {
@@ -102,7 +111,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   prevBtn.addEventListener("click", () => {
-    currentIndex = (currentIndex - 1 + carouselImages.length) % carouselImages.length;
+    currentIndex =
+      (currentIndex - 1 + carouselImages.length) % carouselImages.length;
     showImage(currentIndex);
     resetAutoRotate();
   });
@@ -117,9 +127,8 @@ const slideNextBtn = document.getElementById("nextBtn");
 const indicatorsContainer = document.getElementById("indicators");
 
 if (indicatorsContainer && totalSlides > 0) {
-  // OPTIMIZED: Use DocumentFragment for batch DOM operations
   const fragment = document.createDocumentFragment();
-  
+
   for (let i = 0; i < totalSlides; i++) {
     const indicator = document.createElement("div");
     indicator.classList.add("indicator");
@@ -127,7 +136,7 @@ if (indicatorsContainer && totalSlides > 0) {
     indicator.addEventListener("click", () => goToSlide(i));
     fragment.appendChild(indicator);
   }
-  
+
   indicatorsContainer.appendChild(fragment);
 }
 
@@ -173,10 +182,9 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight") nextSlide();
 });
 
-// OPTIMIZED: Aurora wave background with better performance
 const canvas = document.getElementById("floatingCanvas");
 if (canvas) {
-  const ctx = canvas.getContext("2d", { alpha: false }); // Disable alpha for better performance
+  const ctx = canvas.getContext("2d", {alpha: false}); // Disable alpha for better performance
   const parent = canvas.parentElement;
   let width = (canvas.width = parent.offsetWidth);
   let height = (canvas.height = parent.offsetHeight);
@@ -184,25 +192,27 @@ if (canvas) {
   let animationId;
 
   const colors = [
-    'rgba(119, 141, 169, 1)',
-    'rgba(224, 225, 221, 1)',
-    'rgba(65, 90, 119, 1)',
-    'rgba(119, 141, 169, 1)'
+    "rgba(119, 141, 169, 1)",
+    "rgba(224, 225, 221, 1)",
+    "rgba(65, 90, 119, 1)",
+    "rgba(119, 141, 169, 1)",
   ];
 
-  // OPTIMIZED: Use Intersection Observer to pause animation when not visible
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        if (!animationId) animate();
-      } else {
-        if (animationId) {
-          cancelAnimationFrame(animationId);
-          animationId = null;
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          if (!animationId) animate();
+        } else {
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+          }
         }
-      }
-    });
-  }, { threshold: 0.1 });
+      });
+    },
+    {threshold: 0.1},
+  );
 
   observer.observe(canvas);
 
@@ -219,14 +229,14 @@ if (canvas) {
       ctx.lineWidth = 4;
       ctx.shadowBlur = 20;
       ctx.shadowColor = colors[i];
-      
-      // OPTIMIZED: Reduce iterations for better performance (every 4 pixels instead of 2)
+
       for (let x = 0; x <= width; x += 4) {
-        const y = height / 2 + 
-                Math.sin((x * 0.006) + time + i * 1.2) * 120 +
-                Math.sin((x * 0.012) + time * 0.7 + i * 0.8) * 80 +
-                Math.sin((x * 0.02) + time * 1.5 + i * 0.5) * 40;
-        
+        const y =
+          height / 2 +
+          Math.sin(x * 0.006 + time + i * 1.2) * 120 +
+          Math.sin(x * 0.012 + time * 0.7 + i * 0.8) * 80 +
+          Math.sin(x * 0.02 + time * 1.5 + i * 0.5) * 40;
+
         if (x === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
@@ -239,7 +249,6 @@ if (canvas) {
 
   animate();
 
-  // OPTIMIZED: Debounce resize event
   let resizeTimeout;
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimeout);
@@ -271,7 +280,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const form = document.querySelector(".contact-form");
 
-// Create a message element for feedback
 const feedback = document.createElement("div");
 feedback.style.marginTop = "1rem";
 feedback.style.fontWeight = "600";
@@ -290,7 +298,7 @@ form.addEventListener("submit", async (e) => {
     message: formData.get("message"),
   };
 
-  const { email, studentId, subject, category, message } = payload;
+  const {email, studentId, subject, category, message} = payload;
 
   if (!email || !studentId || !subject || !category || !message) {
     feedback.textContent = "Please fill in all required fields.";
@@ -301,7 +309,7 @@ form.addEventListener("submit", async (e) => {
   try {
     const response = await fetch("/api/contact", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify(payload),
     });
 

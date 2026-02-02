@@ -9,17 +9,13 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSidebarNavigation();
 });
 
-/* ============================
-   UTILITY
-============================ */
+//UTILITY
 function setText(id, value) {
   const el = document.getElementById(id);
   if (el) el.textContent = value;
 }
 
-/* ============================
-   CURRENT USER
-============================ */
+//CURRENT USER
 function loadCurrentUser() {
   fetch("/api/current-user")
     .then((res) => res.json())
@@ -30,7 +26,7 @@ function loadCurrentUser() {
       const nameEl = document.querySelector(".profile h3");
 
       if (avatar) {
-        // Show initials (first letters of first and last name)
+        // Show initials
         const initials = user.name
           .split(" ")
           .map((n) => n[0])
@@ -44,9 +40,7 @@ function loadCurrentUser() {
     .catch((err) => console.error("Failed to load current user:", err));
 }
 
-/* ============================
-   ITEMS
-============================ */
+//ITEMS
 function loadItems() {
   const container = document.getElementById("itemsList");
   if (!container) return;
@@ -98,9 +92,7 @@ function loadPendingCounts() {
     .catch((err) => console.error("Error loading pending submissions:", err));
 }
 
-/* ============================
-   CONTACT MESSAGES
-============================ */
+//CONTACT MESSAGES
 function loadContactMessages() {
   fetch("/api/contact/waiting")
     .then((res) => res.json())
@@ -175,9 +167,7 @@ function renderContactMessages() {
   });
 }
 
-/* ============================
-   CLAIMS
-============================ */
+//CLAIMS
 function loadClaims() {
   fetch("/api/pending")
     .then((res) => res.json())
@@ -288,9 +278,7 @@ function submitDecision(submission, decision) {
     });
 }
 
-/* ============================
-   PURCHASES
-============================ */
+//PURCHASES
 function loadPurchases() {
   fetch("/api/purchases")
     .then((res) => res.json())
@@ -361,9 +349,7 @@ function fulfillPurchase(itemKey, email, id, purchasedAt) {
     });
 }
 
-/* ============================
-   SIDEBAR NAVIGATION
-============================ */
+//SIDEBAR NAVIGATION
 function setupSidebarNavigation() {
   const buttons = document.querySelectorAll(".dash-nav button");
   const sections = document.querySelectorAll(".main-panel .grid");

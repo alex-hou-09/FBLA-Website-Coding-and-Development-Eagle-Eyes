@@ -52,7 +52,9 @@
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -91,17 +93,16 @@
 
 .no-image {
   width: 100%;
-  height: 40vh; /* match the previous image height */
+  height: 40vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #f0f0f0;
   color: black;
-  font-family: 'Quicksand', sans-serif;
+  font-family: "Quicksand", sans-serif;
   font-weight: 500;
   font-size: 1rem;
   border-radius: 5px;
   border: 1px solid #ccc;
   text-align: center;
 }
-

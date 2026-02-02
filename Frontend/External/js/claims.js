@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
       studentID: document.getElementById("studentID").value.trim(),
       itemName: selectedItemName,
       itemID: selectedItemId,
-      dateLost: document.getElementById("color").value.trim(), // field for date lost
+      dateLost: document.getElementById("color").value.trim(),
       uniqueFeatures: document.getElementById("uniqueMarks").value.trim(),
       notes: document.getElementById("locationLost").value.trim(),
     };
@@ -29,31 +29,29 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const res = await fetch("/api/item-claims", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(claimData),
       });
 
       const result = await res.json();
 
       if (result.success) {
-        message.textContent = "Claim Pending. An administrator will review your submission.";
-        message.style.color = "green";
+        message.textContent = "Claim submitted! Redirecting...";
+        message.className = "success";
         message.style.display = "block";
 
-        // Clear the form after 3 seconds
         setTimeout(() => {
-          form.reset();
-          message.style.display = "none";
-        }, 3000);
+          window.location.href = "browse.html";
+        }, 1500);
       } else {
         message.textContent = result.error || "Failed to submit claim.";
-        message.style.color = "red";
+        message.className = "error";
         message.style.display = "block";
       }
     } catch (err) {
       console.error(err);
       message.textContent = "An error occurred while submitting the claim.";
-      message.style.color = "red";
+      message.className = "error";
       message.style.display = "block";
     }
   });

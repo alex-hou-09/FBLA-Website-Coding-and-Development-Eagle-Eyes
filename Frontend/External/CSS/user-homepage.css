@@ -148,27 +148,27 @@
 
 /* Pending reports (yellow border) */
 .sect.pending {
-  border-left: 4px solid #FFD700; /* gold/yellow */
-  padding-left: 8px; /* add some space after border */
+  border-left: 4px solid #ffd700;
+  padding-left: 8px;
 }
 
 /* Waiting reports (orange border) */
 .sect.waiting {
-  border-left: 4px solid #FFA500; /* orange */
+  border-left: 4px solid #ffa500; /* orange */
   padding-left: 8px;
 }
 
 /* Claimed reports (optional, could be green or no border) */
 .sect.claimed {
-  border-left: 4px solid #4CAF50; /* green */
+  border-left: 4px solid #4caf50; /* green */
   padding-left: 8px;
 }
 
-.shop{
+.shop {
   margin-top: 3%;
 }
 
-.shop-list{
+.shop-list {
   margin-top: 3%;
   display: grid;
   grid-template-columns: auto auto auto;
@@ -176,7 +176,7 @@
   text-align: center;
 }
 
-.shop-option{
+.shop-option {
   background-color: white;
   border-radius: 10px;
   border: 3px solid var(--light);
@@ -189,17 +189,17 @@
   cursor: pointer;
 }
 
-.store-icon{
+.store-icon {
   position: relative;
   top: 20%;
 }
 
-.store-icon-text{
+.store-icon-text {
   position: relative;
   top: 23%;
 }
 
-.point-values{
+.point-values {
   position: relative;
   top: 30%;
   color: green;
@@ -274,7 +274,7 @@
 }
 
 .btn-confirm {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
 }
 

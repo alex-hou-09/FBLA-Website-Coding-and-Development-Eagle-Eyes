@@ -2,8 +2,12 @@
   display: flex;
   min-height: 100vh;
   background: linear-gradient(135deg, #1b263b, #415a77);
-  font-family: "Quicksand", sans-serif;
+  font-family: "Montserrat", sans-serif;
   color: white;
+}
+
+.dashboard h2 {
+  font-weight: 500;
 }
 
 .sidebar {
@@ -95,9 +99,15 @@
 }
 
 /* Overview rows */
-.row.pending { border-left: 5px solid #f4a261; }
-.row.approved { border-left: 5px solid #2a9d8f; }
-.row.picked { border-left: 5px solid #264653; }
+.row.pending {
+  border-left: 5px solid #f4a261;
+}
+.row.approved {
+  border-left: 5px solid #2a9d8f;
+}
+.row.picked {
+  border-left: 5px solid #264653;
+}
 
 /* Generic row alignment only */
 .grid > .panel > .row {
@@ -107,10 +117,9 @@
 /* Claims moderation layout */
 .claim-row {
   display: flex;
-  align-items: flex-start; /* top-align content */
+  align-items: flex-start;
   gap: 20px;
 }
-
 
 .claim-content {
   flex: 1;
@@ -147,7 +156,7 @@
   background: #c1121f;
 }
 
-.claim-buttons{
+.claim-buttons {
   display: flex;
   justify-content: center;
   gap: 10px;
@@ -213,7 +222,7 @@
   border-radius: 12px;
   border: none;
   resize: none;
-  font-family: "Quicksand", sans-serif;
+  font-family: "Montserrat", sans-serif;
   background: rgba(255, 255, 255, 0.08);
   color: white;
   outline: none;
@@ -236,8 +245,6 @@
 .center {
   text-align: center;
 }
-
-/* Add this to your admin.css file */
 
 /* Purchase rows */
 .purchase-row {

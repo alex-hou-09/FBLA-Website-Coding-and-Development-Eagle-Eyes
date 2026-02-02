@@ -71,7 +71,6 @@ document.getElementById("logoutButton")?.addEventListener("click", () => {
     .then((res) => res.json())
     .then((data) => {
       if (data.success) {
-        // Optionally redirect to login page
         window.location.href = "/Frontend/HTML/login.html";
       } else {
         alert(data.message || "No user logged in");

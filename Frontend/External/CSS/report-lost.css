@@ -1,7 +1,7 @@
 .report-section {
   padding: 5%;
   font-family: "Quicksand", sans-serif;
-  overflow:hidden;
+  overflow: hidden;
 }
 
 .report-layout {
@@ -34,7 +34,7 @@
 
 .report-form h1 {
   font-family: "Montserrat", sans-serif;
-  font-weight: 500;
+  font-weight: 450;
   text-align: left;
   color: var(--verydark);
 }
@@ -91,7 +91,6 @@ button {
   left: -45%;
   bottom: 25%;
 }
-
 
 .circle-3 {
   background-color: var(--medium);
