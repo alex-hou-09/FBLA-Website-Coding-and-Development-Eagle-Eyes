@@ -219,8 +219,3 @@ http://localhost:3000
 
 ### Topics
 `nodejs` `express` `mongodb` `fbla` `lost-and-found` `resend` `multer` `sharp`
-
-### Languages
-- JavaScript: 65.0%
-- HTML: 25.0%
-- CSS: 10.0%
