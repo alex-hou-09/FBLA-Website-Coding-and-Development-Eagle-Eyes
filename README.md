@@ -1,4 +1,4 @@
-# FBLA Lost and Found - Digital Lost and Found System for Walnut Hills High School
+# FBLA Website Coding and Development - WHHS Digital Lost and Found
 
 A comprehensive full-stack lost and found platform specifically designed to digitize and streamline the lost and found process at Walnut Hills High School. This project was developed for the FBLA 2025-26 Website Coding and Development competition.
 
@@ -23,8 +23,8 @@ This project was created for the FBLA 2025-26 Website Coding and Development eve
 - A backend system and admin view to review, approve, and manage item postings
 
 **Competition Resources:**
-- [Full Rubric](link-to-rubric)
-- [Project Script](link-to-script)
+- [Full Rubric](https://www.fbla.org/competitive-events/website-coding-development/)
+- [Project Script](https://docs.google.com/document/d/1YQ2jPIj2uP7jZfQi2Du8O4SvgM8_Dn1hM6OfC6A6h78/edit?usp=sharing)
 
 ---
 
@@ -140,18 +140,22 @@ git clone https://github.com/alex-hou-09/FBLA-Website-Coding-and-Development-202
 ```bash
 cd FBLA-Website-Coding-and-Development-2026
 ```
+3. Navigate into the Backend folder:
+```bash
+cd Backend
+```
 
-3. Install dependencies:
+4. Install dependencies:
 ```bash
 npm install
 ```
 
-4. Start the server:
+5. Start the server:
 ```bash
 node server.js
 ```
 
-5. Open a browser and go to:
+6. Open a browser and go to:
 ```
 http://localhost:3000
 ```
@@ -212,16 +216,6 @@ http://localhost:3000
    - Oversee credits distribution
 
 ---
-
-**Developed for FBLA 2025-26 Website Coding and Development Competition**
-
-This platform represents a modern solution to traditional lost and found management, combining web technologies, email automation, and gamification to create a community-driven system that benefits the entire student body.
-
----
-
-## About
-
-Digital lost and found system developed for FBLA Website Coding and Development 2025-26. Built with Node.js, Express.js, MongoDB, and modern web technologies.
 
 ### Topics
 `nodejs` `express` `mongodb` `fbla` `lost-and-found` `resend` `multer` `sharp`
