@@ -21,19 +21,46 @@ Note: the frontend is built off my previous project displaying the computer scie
 ##  Folder Structure
 
 ```
-FBLA-Website-Coding-and-Development-2026/
-├── Data/               # JSON files storing users, items, claims, etc.
+FBLA - Lost and Found/
+├── Backend/
+│   ├── config/
+│   │   ├── database.js
+│   │   ├── multer.js
+│   │   └── session.js
+│   ├── helpers/
+│   │   ├── emailHelper.js
+│   │   └── fileHelpers.js
+│   ├── models/
+│   │   ├── ClaimedItem.js
+│   │   ├── ContactAnswered.js
+│   │   ├── ContactWaiting.js
+│   │   ├── Item.js
+│   │   ├── ItemClaim.js
+│   │   ├── LostItem.js
+│   │   ├── Pending.js
+│   │   ├── Purchase.js
+│   │   └── User.js
+│   ├── routes/
+│   │   ├── auth.js
+│   │   ├── claims.js
+│   │   ├── contact.js
+│   │   ├── items.js
+│   │   ├── purchases.js
+│   │   └── user.js
+│   └── server.js
 ├── Frontend/
-│   ├── HTML/           # All HTML pages
-│   ├── Images/         # Images used in the site
-│   └── External/
-│       ├── CSS/        # All CSS files
-│       └── JS/         # All JavaScript files
-├── .gitignore          # Files and folders Git should ignore  
-├── package.json        # Project configuration and dependencies
-├── package-lock.json   # Auto-generated dependency tree
-├── server.js           # Node.js/Express backend
-└── README.md           # This documentation
+│   ├── External/
+│   │   ├── CSS/
+│   │   └── js/
+│   ├── HTML/
+│   └── Images/
+├── uploads/
+├── node_modules/
+├── .gitignore
+├── emailTemplates.js
+├── package-lock.json
+├── package.json
+└── README.md
 
 ```
 
