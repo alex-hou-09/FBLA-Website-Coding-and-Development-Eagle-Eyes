@@ -14,20 +14,16 @@ const pendingSchema = new mongoose.Schema(
     color: {type: String},
     description: {type: String},
 
-    // found-report fields
     locationFound: {type: String},
     dateFound: {type: String},
 
-    // lost-report fields
     lastSeen: {type: String},
 
-    // item-claim fields
     itemID: {type: String},
     dateLost: {type: String},
     uniqueFeatures: {type: String},
     notes: {type: String},
 
-    // image upload fields
     tempImagePath: {type: String},
     originalImageName: {type: String},
   },

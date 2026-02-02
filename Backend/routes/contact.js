@@ -6,7 +6,6 @@ const {getContactResponseEmail} = require("../../emailTemplates");
 const ContactWaiting = require("../models/ContactWaiting");
 const ContactAnswered = require("../models/ContactAnswered");
 
-// POST /api/contact — student submits a message
 router.post("/", async (req, res) => {
   try {
     const {email, studentId, subject, category, message} = req.body;
@@ -23,13 +22,11 @@ router.post("/", async (req, res) => {
   }
 });
 
-// POST /api/contact/respond — admin replies to a waiting message
 router.post("/respond", async (req, res) => {
   try {
     const {message, response, answeredAt} = req.body;
     if (!message || !response) return res.status(400).json({success: false});
 
-    // Find the waiting message by its content
     const waitingDoc = await ContactWaiting.findOne({
       email: message.email,
       studentId: message.studentId,
@@ -41,7 +38,6 @@ router.post("/respond", async (req, res) => {
       return res.status(404).json({success: false, error: "Message not found"});
     }
 
-    // Move to answered
     await ContactAnswered.create({
       email: waitingDoc.email,
       studentId: waitingDoc.studentId,
@@ -52,10 +48,8 @@ router.post("/respond", async (req, res) => {
       answeredAt,
     });
 
-    // Delete from waiting
     await ContactWaiting.deleteOne({_id: waitingDoc._id});
 
-    // Email the student
     const userName = waitingDoc.email.split("@")[0];
     await sendEmail({
       to: waitingDoc.email,
@@ -68,8 +62,6 @@ router.post("/respond", async (req, res) => {
   }
 });
 
-
-// GET /api/contact/waiting
 router.get("/waiting", async (req, res) => {
   try {
     const messages = await ContactWaiting.find({});

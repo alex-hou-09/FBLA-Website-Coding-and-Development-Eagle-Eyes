@@ -1,10 +1,11 @@
+/* Moves images into the folder to be displayed on site */
+
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
 
 const UPLOADS_DIR = path.join(__dirname, "..", "..", "uploads");
 
-// Create uploads directory if it doesn't exist
 if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, {recursive: true});
 }
@@ -21,7 +22,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: {fileSize: 5 * 1024 * 1024}, // 5MB limit
+  limits: {fileSize: 5 * 1024 * 1024},
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);

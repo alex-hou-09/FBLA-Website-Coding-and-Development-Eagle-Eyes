@@ -4,9 +4,6 @@ const router = express.Router();
 const User = require("../models/User");
 const Purchase = require("../models/Purchase");
 
-// ===========================
-// POST /api/user/purchase
-// ===========================
 router.post("/user/purchase", async (req, res) => {
   try {
     const {itemKey, cost, email, id} = req.body;
@@ -26,11 +23,11 @@ router.post("/user/purchase", async (req, res) => {
       return res.json({success: false, error: "Insufficient credits"});
     }
 
-    // Deduct credits
+    // deduct credits
     user.credits = currentCredits - cost;
     await user.save();
 
-    // Record purchase
+    // record purchase
     await Purchase.create({
       itemKey,
       email,
@@ -38,7 +35,6 @@ router.post("/user/purchase", async (req, res) => {
       purchasedAt: new Date().toISOString(),
     });
 
-    // Keep session in sync
     if (req.session.user) {
       req.session.user.credits = user.credits;
     }
@@ -50,15 +46,10 @@ router.post("/user/purchase", async (req, res) => {
   }
 });
 
-// ===========================
-// GET /api/purchases
-// Admin: view all purchases, grouped by itemKey (matches old JSON shape)
-// ===========================
 router.get("/purchases", async (req, res) => {
   try {
     const all = await Purchase.find({});
 
-    // Group into the same shape the frontend expects: { candy: [...], tickets: [...], cards: [...] }
     const grouped = {candy: [], tickets: [], cards: []};
     for (const p of all) {
       grouped[p.itemKey].push({
@@ -74,10 +65,6 @@ router.get("/purchases", async (req, res) => {
   }
 });
 
-// ===========================
-// POST /api/purchases/fulfill
-// Admin: mark a purchase as fulfilled
-// ===========================
 router.post("/purchases/fulfill", async (req, res) => {
   try {
     const {itemKey, email, id, purchasedAt} = req.body;

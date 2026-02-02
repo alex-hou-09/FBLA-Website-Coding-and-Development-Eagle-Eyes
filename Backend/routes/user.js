@@ -8,9 +8,6 @@ const ClaimedItem = require("../models/ClaimedItem");
 const ContactAnswered = require("../models/ContactAnswered");
 const User = require("../models/User");
 
-// ===========================
-// GET /api/user/item-claims
-// ===========================
 router.get("/user/item-claims", async (req, res) => {
   try {
     if (!req.session.user || !req.session.user.email) {
@@ -20,7 +17,7 @@ router.get("/user/item-claims", async (req, res) => {
     const userEmail = req.session.user.email.toLowerCase();
     const userID = String(req.session.user.id);
 
-    // Pending item-claims for this user
+    // pending item-claims for user
     const pendingClaims = await Pending.find({
       typeOfSubmission: "item-claim",
       $or: [
@@ -29,7 +26,7 @@ router.get("/user/item-claims", async (req, res) => {
       ],
     });
 
-    // Approved item-claims for this user
+    // approved item-claims for user
     const approvedClaims = await ItemClaim.find({
       typeOfSubmission: "item-claim",
       $or: [
@@ -49,9 +46,6 @@ router.get("/user/item-claims", async (req, res) => {
   }
 });
 
-// ===========================
-// DELETE /api/item-claims/:itemID/:email
-// ===========================
 router.delete("/item-claims/:itemID/:email", async (req, res) => {
   try {
     const itemID = req.params.itemID;
@@ -73,9 +67,6 @@ router.delete("/item-claims/:itemID/:email", async (req, res) => {
   }
 });
 
-// ===========================
-// GET /api/user/turned-in-items
-// ===========================
 router.get("/user/turned-in-items", async (req, res) => {
   try {
     if (!req.session.user) return res.status(401).json({success: false});
@@ -88,16 +79,16 @@ router.get("/user/turned-in-items", async (req, res) => {
       $or: [{submitterEmail: emailMatch}, {submitterID: userID}],
     };
 
-    // Pending found-reports
+    // pending found-reports
     const pendingReports = await Pending.find({
       typeOfSubmission: "found-report",
       $or: [{studentEmail: emailMatch}, {studentID: userID}],
     });
 
-    // Active items waiting to be claimed
+    // active items waiting to be claimed
     const waitingReports = await Item.find(userFilter);
 
-    // Already claimed items
+    // already claimed items
     const claimedReports = await ClaimedItem.find(userFilter);
 
     res.json({
@@ -113,9 +104,6 @@ router.get("/user/turned-in-items", async (req, res) => {
   }
 });
 
-// ===========================
-// DELETE /api/claimed-items/:id
-// ===========================
 router.delete("/claimed-items/:id", async (req, res) => {
   try {
     const result = await ClaimedItem.deleteOne({id: req.params.id});
@@ -130,9 +118,6 @@ router.delete("/claimed-items/:id", async (req, res) => {
   }
 });
 
-// ===========================
-// GET /api/user/contact-responses
-// ===========================
 router.get("/user/contact-responses", async (req, res) => {
   try {
     if (!req.session.user) return res.status(401).json({success: false});
@@ -153,9 +138,6 @@ router.get("/user/contact-responses", async (req, res) => {
   }
 });
 
-// ===========================
-// DELETE /api/contact-responses/:email/:subject
-// ===========================
 router.delete("/contact-responses/:email/:subject", async (req, res) => {
   try {
     const decodedEmail = decodeURIComponent(req.params.email);
@@ -178,9 +160,6 @@ router.delete("/contact-responses/:email/:subject", async (req, res) => {
   }
 });
 
-// ===========================
-// GET /api/user/credits
-// ===========================
 router.get("/user/credits", async (req, res) => {
   try {
     if (!req.session.user) {

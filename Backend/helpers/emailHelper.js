@@ -1,15 +1,17 @@
+/* sends emails */
+
 require("dotenv").config();
 const {Resend} = require("resend");
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
- * Send an email via Resend.
+ * Use Resend here
  * @param {object} opts
- * @param {string} opts.to       - Recipient address
- * @param {string} opts.subject  - Email subject
- * @param {string} [opts.text]   - Plain-text fallback
- * @param {string} [opts.html]   - HTML body
+ * @param {string} opts.to        Recipient address
+ * @param {string} opts.subject   Email subject
+ * @param {string} [opts.text]    Plain-text fallback
+ * @param {string} [opts.html]    HTML body
  */
 const sendEmail = async ({to, subject, text, html}) => {
   try {

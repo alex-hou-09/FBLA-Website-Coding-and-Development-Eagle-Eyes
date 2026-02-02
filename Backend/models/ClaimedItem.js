@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const claimedItemSchema = new mongoose.Schema(
   {
-    id: {type: String, required: true}, // original item id
+    id: {type: String, required: true},
     name: {type: String},
     category: {type: String},
     color: {type: String},

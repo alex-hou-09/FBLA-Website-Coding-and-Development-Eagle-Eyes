@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
     userType: {type: String, enum: ["Student", "Admin"], required: true},
     credits: {type: Number, default: 0},
   },
-  {_id: true}, // let Mongo generate _id, we keep "id" as a separate field
+  {_id: true},
 );
 
 module.exports = mongoose.model("User", userSchema);

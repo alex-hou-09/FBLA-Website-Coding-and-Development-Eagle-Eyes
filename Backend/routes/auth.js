@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 
-// POST /api/login
 router.post("/login", async (req, res) => {
   try {
     const {email, id} = req.body;
@@ -34,12 +33,10 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// GET /api/current-user
 router.get("/current-user", (req, res) => {
   res.json(req.session.user || null);
 });
 
-// POST /api/logout
 router.post("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) return res.status(500).json({success: false});

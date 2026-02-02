@@ -15,18 +15,12 @@ const purchaseRoutes = require("./routes/purchases");
 const app = express();
 const PORT = 3000;
 
-// ===========================
 // Middleware
-// ===========================
 app.use(express.json());
-// Serve static files from project root (Backend/ is one level deep, so go up one)
 app.use(express.static(path.join(__dirname, "..")));
 app.use(sessionMiddleware);
 
-// ===========================
 // Routes
-// Original URLs are preserved exactly as they were.
-// ===========================
 app.use("/api/items", itemRoutes); // GET /api/items, DELETE /api/items/:id, GET /api/items/latest
 app.use("/api", authRoutes); // POST /api/login, GET /api/current-user, POST /api/logout
 app.use("/api/claims", claimRoutes); // POST /api/claims, POST /api/claims/decision
@@ -35,9 +29,7 @@ app.use("/api/contact", contactRoutes); // POST /api/contact, POST /api/contact/
 app.use("/api", userRoutes); // GET  /api/user/*, DELETE /api/item-claims/:id/:email, etc.
 app.use("/api", purchaseRoutes); // POST /api/user/purchase, GET /api/purchases, POST /api/purchases/fulfill
 
-// ===========================
 // Start Server
-// ===========================
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);

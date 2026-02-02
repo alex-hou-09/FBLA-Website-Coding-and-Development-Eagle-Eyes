@@ -20,10 +20,6 @@ const LostItem = require("../models/LostItem");
 const ClaimedItem = require("../models/ClaimedItem");
 const User = require("../models/User");
 
-// ===========================
-// POST /api/claims
-// Submit a found-report or lost-report (with optional image)
-// ===========================
 router.post("/", upload.single("image"), async (req, res) => {
   try {
     const newClaim = {
@@ -55,10 +51,6 @@ router.post("/", upload.single("image"), async (req, res) => {
   }
 });
 
-// ===========================
-// POST /api/item-claims
-// Submit an item claim (no image)
-// ===========================
 router.post("/item-claims", async (req, res) => {
   try {
     const {
@@ -94,22 +86,16 @@ router.post("/item-claims", async (req, res) => {
   }
 });
 
-// ===========================
-// POST /api/claims/decision
-// Admin approves or denies a pending submission
-// ===========================
 router.post("/decision", async (req, res) => {
   try {
     const {submission, decision} = req.body;
 
-    // Build a more specific query to find the EXACT pending document
     const query = {
       typeOfSubmission: submission.typeOfSubmission,
       studentEmail: submission.studentEmail,
       studentID: submission.studentID,
     };
 
-    // Add type-specific fields for better matching
     if (submission.typeOfSubmission === "item-claim") {
       query.itemID = submission.itemID;
       query.dateLost = submission.dateLost;
@@ -124,7 +110,6 @@ router.post("/decision", async (req, res) => {
       query.lastSeen = submission.lastSeen;
     }
 
-    // Find the matching pending doc
     const pendingDoc = await Pending.findOne(query);
 
     if (!pendingDoc) {
@@ -136,7 +121,6 @@ router.post("/decision", async (req, res) => {
 
     let imagePath = "";
 
-    // --- Image handling ---
     if (decision === "approve" && pendingDoc.tempImagePath) {
       const finalImageName = pendingDoc.originalImageName;
       const finalImagePath = path.join(IMAGES_DIR, finalImageName);
@@ -161,23 +145,17 @@ router.post("/decision", async (req, res) => {
       }
     }
 
-    // Remove from pending using the specific _id
     await Pending.deleteOne({_id: pendingDoc._id});
 
-    // --- APPROVE ---
     if (decision === "approve") {
-      // 1. Item-Claim
       if (submission.typeOfSubmission === "item-claim") {
-        // Record the approved claim
         await ItemClaim.create({...submission, status: "Approved"});
 
-        // Find the active item being claimed
         const claimedItem = await Item.findOne({id: String(submission.itemID)});
         if (!claimedItem) {
           throw new Error("Item not found in Items collection");
         }
 
-        // Move it to ClaimedItems
         await ClaimedItem.create({
           id: claimedItem.id,
           name: claimedItem.name,
@@ -194,7 +172,6 @@ router.post("/decision", async (req, res) => {
           claimedAt: new Date().toISOString(),
         });
 
-        // Award 10 credits to the person who turned it in
         console.log(
           `Attempting to award credits to submitterID: ${claimedItem.submitterID}`,
         );
@@ -210,10 +187,8 @@ router.post("/decision", async (req, res) => {
         );
         console.log(`Credit update result:`, creditUpdate);
 
-        // Remove from active items
         await Item.deleteOne({id: String(submission.itemID)});
 
-        // Email the claimer
         const userName = submission.studentEmail.split("@")[0];
         await sendEmail({
           to: submission.studentEmail,
@@ -224,7 +199,6 @@ router.post("/decision", async (req, res) => {
           ),
         });
 
-        // Email the original submitter
         if (claimedItem.submitterEmail) {
           const submitterName = claimedItem.submitterEmail.split("@")[0];
           await sendEmail({
@@ -238,7 +212,6 @@ router.post("/decision", async (req, res) => {
         }
       }
 
-      // 2. Lost-Report
       if (submission.typeOfSubmission === "lost-report") {
         await LostItem.create({...submission, image: imagePath});
 
@@ -253,7 +226,6 @@ router.post("/decision", async (req, res) => {
         });
       }
 
-      // 3. Found-Report
       if (submission.typeOfSubmission === "found-report") {
         await Item.create({
           id: Date.now().toString(),
@@ -281,7 +253,6 @@ router.post("/decision", async (req, res) => {
       }
     }
 
-    // --- DENY ---
     if (decision === "deny") {
       const userName = submission.studentEmail.split("@")[0];
       const itemName = submission.itemName || `Item ID: ${submission.itemID}`;
@@ -305,7 +276,6 @@ router.post("/decision", async (req, res) => {
   }
 });
 
-// GET /api/lost-items
 router.get("/lost-items", async (req, res) => {
   try {
     const items = await LostItem.find({});
@@ -315,7 +285,6 @@ router.get("/lost-items", async (req, res) => {
   }
 });
 
-// GET /api/pending
 router.get("/pending", async (req, res) => {
   try {
     const pending = await Pending.find({});

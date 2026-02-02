@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const itemSchema = new mongoose.Schema(
   {
-    id: {type: String, required: true, unique: true}, // the original timestamp-based id
+    id: {type: String, required: true, unique: true},
     name: {type: String, required: true},
     category: {type: String},
     color: {type: String},
