@@ -214,8 +214,3 @@ http://localhost:3000
    - Manage user accounts
    - Respond to contact requests
    - Oversee credits distribution
-
----
-
-### Topics
-`nodejs` `express` `mongodb` `fbla` `lost-and-found` `resend` `multer` `sharp`
